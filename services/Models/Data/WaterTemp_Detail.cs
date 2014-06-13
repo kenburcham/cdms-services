@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace services.Models.Data
+{
+    public class WaterTemp_Detail : DataDetail
+    {
+        public DateTime ReadingDateTime { get; set; }
+        public double? WaterTemperature { get; set; }
+        public double? WaterTemperatureF { get; set; }
+        public double? WaterLevel { get; set; }
+        public double? TempAToD { get; set; }
+        public double? BatteryVolts { get; set; }
+
+    }
+}

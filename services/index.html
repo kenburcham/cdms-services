@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Login Test</title>
+
+  <link rel="stylesheet" href="foundation/css/normalize.css" />
+  <link rel="stylesheet" href="foundation/css/foundation.css?v2" />
+
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://js.arcgis.com/3.6/js/esri/css/esri.css">
+<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.6/js/dojo/dijit/themes/claro/claro.css" />
+<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.6/js/dojo/dojox/form/resources/CheckedMultiSelect.css" />
+<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.6/js/dojo/dojox/form/resources/UploaderFileList.css" />
+
+
+
+<!-- Load the library references for ArcGIS API for JavaScript -->
+<script>var dojoConfig = {
+    parseOnLoad: true,
+    isDebug: true
+};</script>
+
+<script src="http://js.arcgis.com/3.6/"></script>
+
+<script>
+    try {
+        require(["dojo/request/xhr"], function (request) {
+            console.log("trying... whoami?!");
+            request("/services/action/WhoAmI", {
+                handleAs: "json",
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }, //don't forget this -- default is url-encoded form
+            }).then(function (data) {
+                console.log("We're back!");
+                console.dir(data);
+                alert("Hi there, " + data.Username);
+            }, function (err) {
+                if (err.message && err.message.indexOf("403") != -1) {
+                    console.log("Oops -- looks like we aren't logged in.");
+                    console.dir(err);
+                    alert("Please login!");
+                } else {
+                    alert("Some other error!");
+                    console.dir(err);
+                }
+            });
+        });
+
+    } catch (e) {
+
+    }
+</script>
+</head>
+<body>
+Hi there!
+
+</body>
+</html>

@@ -1,0 +1,717 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8723687B-7446-4449-B1C9-81EF01BD6C07}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>services</RootNamespace>
+    <AssemblyName>services</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CsvHelper">
+      <HintPath>..\packages\CsvHelper.2.5.0\lib\net40-client\CsvHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
+    <Reference Include="Excel">
+      <HintPath>..\packages\ExcelDataReader.2.1.1\lib\net20\Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\ExcelDataReader.2.1.1\lib\net20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Linq.Dynamic">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.0\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Mvc.FixedDisplayModes, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.FixedDisplayModes.1.0.0\lib\net40\Microsoft.Web.Mvc.FixedDisplayModes.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Providers">
+      <HintPath>..\packages\Microsoft.AspNet.Providers.Core.1.2\lib\net40\System.Web.Providers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Tracing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Tracing.4.0.0\lib\net40\System.Web.Http.Tracing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.OData, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.OData.4.0.0\lib\net40\System.Web.Http.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.Edm, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Data.Edm.5.2.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Data.OData.5.2.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Spatial, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\System.Spatial.5.2.0\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.3.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.3.0\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\SecurityConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DataActionController.cs" />
+    <Compile Include="Controllers\DatasetsController.cs" />
+    <Compile Include="Controllers\DatastoreController.cs" />
+    <Compile Include="Migrations\201308052143115_InitialModels.cs" />
+    <Compile Include="Migrations\201308052143115_InitialModels.Designer.cs">
+      <DependentUpon>201308052143115_InitialModels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308052219053_ProjectOrgTweak.cs" />
+    <Compile Include="Migrations\201308052219053_ProjectOrgTweak.Designer.cs">
+      <DependentUpon>201308052219053_ProjectOrgTweak.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308061705296_FilesController.cs" />
+    <Compile Include="Migrations\201308061705296_FilesController.Designer.cs">
+      <DependentUpon>201308061705296_FilesController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308061716594_FixFile.cs" />
+    <Compile Include="Migrations\201308061716594_FixFile.Designer.cs">
+      <DependentUpon>201308061716594_FixFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311202247256_activities_models.cs" />
+    <Compile Include="Migrations\201311202247256_activities_models.Designer.cs">
+      <DependentUpon>201311202247256_activities_models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201312112340144_adultweirdataset.cs" />
+    <Compile Include="Migrations\201312112340144_adultweirdataset.Designer.cs">
+      <DependentUpon>201312112340144_adultweirdataset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201312112344164_adultweirdataset2.cs" />
+    <Compile Include="Migrations\201312112344164_adultweirdataset2.Designer.cs">
+      <DependentUpon>201312112344164_adultweirdataset2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201312112347453_adultweirdataset3.cs" />
+    <Compile Include="Migrations\201312112347453_adultweirdataset3.Designer.cs">
+      <DependentUpon>201312112347453_adultweirdataset3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201312112350385_adultweirdataset4.cs" />
+    <Compile Include="Migrations\201312112350385_adultweirdataset4.Designer.cs">
+      <DependentUpon>201312112350385_adultweirdataset4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201312162322363_order_fields1.cs" />
+    <Compile Include="Migrations\201312162322363_order_fields1.Designer.cs">
+      <DependentUpon>201312162322363_order_fields1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201312232209129_controltypefield.cs" />
+    <Compile Include="Migrations\201312232209129_controltypefield.Designer.cs">
+      <DependentUpon>201312232209129_controltypefield.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201401031650524_field-changes-1_3_14.cs" />
+    <Compile Include="Migrations\201401031650524_field-changes-1_3_14.Designer.cs">
+      <DependentUpon>201401031650524_field-changes-1_3_14.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201401031853415_move-event-date.cs" />
+    <Compile Include="Migrations\201401031853415_move-event-date.Designer.cs">
+      <DependentUpon>201401031853415_move-event-date.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201401282147253_update_sex_field.cs" />
+    <Compile Include="Migrations\201401282147253_update_sex_field.Designer.cs">
+      <DependentUpon>201401282147253_update_sex_field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201402181939099_rowlevelqastatus.cs" />
+    <Compile Include="Migrations\201402181939099_rowlevelqastatus.Designer.cs">
+      <DependentUpon>201402181939099_rowlevelqastatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201402181947490_adddefaultqastatusfield.cs" />
+    <Compile Include="Migrations\201402181947490_adddefaultqastatusfield.Designer.cs">
+      <DependentUpon>201402181947490_adddefaultqastatusfield.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201402182304595_fishnumcolumn.cs" />
+    <Compile Include="Migrations\201402182304595_fishnumcolumn.Designer.cs">
+      <DependentUpon>201402182304595_fishnumcolumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201402241759387_rowstatuscolumn.cs" />
+    <Compile Include="Migrations\201402241759387_rowstatuscolumn.Designer.cs">
+      <DependentUpon>201402241759387_rowstatuscolumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201402242217488_updateconstraintactivityqa.cs" />
+    <Compile Include="Migrations\201402242217488_updateconstraintactivityqa.Designer.cs">
+      <DependentUpon>201402242217488_updateconstraintactivityqa.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201402242228514_removeboolfrom-detail-fields.cs" />
+    <Compile Include="Migrations\201402242228514_removeboolfrom-detail-fields.Designer.cs">
+      <DependentUpon>201402242228514_removeboolfrom-detail-fields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403072305289_adultweir_fields_tostandards.cs" />
+    <Compile Include="Migrations\201403072305289_adultweir_fields_tostandards.Designer.cs">
+      <DependentUpon>201403072305289_adultweir_fields_tostandards.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403172157257_project-editors.cs" />
+    <Compile Include="Migrations\201403172157257_project-editors.Designer.cs">
+      <DependentUpon>201403172157257_project-editors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403172222348_user-imageurl.cs" />
+    <Compile Include="Migrations\201403172222348_user-imageurl.Designer.cs">
+      <DependentUpon>201403172222348_user-imageurl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403281712123_add-tempF-fields.cs" />
+    <Compile Include="Migrations\201403281712123_add-tempF-fields.Designer.cs">
+      <DependentUpon>201403281712123_add-tempF-fields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404021830573_Datastore-for-dataset.cs" />
+    <Compile Include="Migrations\201404021830573_Datastore-for-dataset.Designer.cs">
+      <DependentUpon>201404021830573_Datastore-for-dataset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404041743182_add_fish_transport.cs" />
+    <Compile Include="Migrations\201404041743182_add_fish_transport.Designer.cs">
+      <DependentUpon>201404041743182_add_fish_transport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404101445183_add-rule-controltype-fields.cs" />
+    <Compile Include="Migrations\201404101445183_add-rule-controltype-fields.Designer.cs">
+      <DependentUpon>201404101445183_add-rule-controltype-fields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404101449068_add-field-rule.cs" />
+    <Compile Include="Migrations\201404101449068_add-field-rule.Designer.cs">
+      <DependentUpon>201404101449068_add-field-rule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404102017282_addFinClip.cs" />
+    <Compile Include="Migrations\201404102017282_addFinClip.Designer.cs">
+      <DependentUpon>201404102017282_addFinClip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404102039599_addGirthTrapLocationFields.cs" />
+    <Compile Include="Migrations\201404102039599_addGirthTrapLocationFields.Designer.cs">
+      <DependentUpon>201404102039599_addGirthTrapLocationFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404102048372_addPassageFields.cs" />
+    <Compile Include="Migrations\201404102048372_addPassageFields.Designer.cs">
+      <DependentUpon>201404102048372_addPassageFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404102051105_PassageTimeNullable.cs" />
+    <Compile Include="Migrations\201404102051105_PassageTimeNullable.Designer.cs">
+      <DependentUpon>201404102051105_PassageTimeNullable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201404242210153_UGR-newfields.cs" />
+    <Compile Include="Migrations\201404242210153_UGR-newfields.Designer.cs">
+      <DependentUpon>201404242210153_UGR-newfields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405011823086_stockfield.cs" />
+    <Compile Include="Migrations\201405011823086_stockfield.Designer.cs">
+      <DependentUpon>201405011823086_stockfield.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405012259433_new-field-columns.cs" />
+    <Compile Include="Migrations\201405012259433_new-field-columns.Designer.cs">
+      <DependentUpon>201405012259433_new-field-columns.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405072221479_after-migration--add-field-category.cs" />
+    <Compile Include="Migrations\201405072221479_after-migration--add-field-category.Designer.cs">
+      <DependentUpon>201405072221479_after-migration--add-field-category.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405091716545_watertemp.cs" />
+    <Compile Include="Migrations\201405091716545_watertemp.Designer.cs">
+      <DependentUpon>201405091716545_watertemp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405091915202_watertemp-optionalwatertempvalues.cs" />
+    <Compile Include="Migrations\201405091915202_watertemp-optionalwatertempvalues.Designer.cs">
+      <DependentUpon>201405091915202_watertemp-optionalwatertempvalues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405161655371_instrument-accuracycheck.cs" />
+    <Compile Include="Migrations\201405161655371_instrument-accuracycheck.Designer.cs">
+      <DependentUpon>201405161655371_instrument-accuracycheck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405161656234_instrument-type-restored.cs" />
+    <Compile Include="Migrations\201405161656234_instrument-type-restored.Designer.cs">
+      <DependentUpon>201405161656234_instrument-type-restored.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405161703034_instrument-accuracycheck-rename.cs" />
+    <Compile Include="Migrations\201405161703034_instrument-accuracycheck-rename.Designer.cs">
+      <DependentUpon>201405161703034_instrument-accuracycheck-rename.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405161742016_tweak-instrument.cs" />
+    <Compile Include="Migrations\201405161742016_tweak-instrument.Designer.cs">
+      <DependentUpon>201405161742016_tweak-instrument.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201405192204341_activity-instrument.cs" />
+    <Compile Include="Migrations\201405192204341_activity-instrument.Designer.cs">
+      <DependentUpon>201405192204341_activity-instrument.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406022001009_addFieldActivityType.cs" />
+    <Compile Include="Migrations\201406022001009_addFieldActivityType.Designer.cs">
+      <DependentUpon>201406022001009_addFieldActivityType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406022146385_singlewaterbodies-for-locations.cs" />
+    <Compile Include="Migrations\201406022146385_singlewaterbodies-for-locations.Designer.cs">
+      <DependentUpon>201406022146385_singlewaterbodies-for-locations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406022152400_single-waterbody-forlocation-fix.cs" />
+    <Compile Include="Migrations\201406022152400_single-waterbody-forlocation-fix.Designer.cs">
+      <DependentUpon>201406022152400_single-waterbody-forlocation-fix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Activity.cs" />
+    <Compile Include="Migrations\201311191804154_dataset-support.cs" />
+    <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
+      <DependentUpon>201311191804154_dataset-support.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311192121463_m-m-qastatus-dataset.cs" />
+    <Compile Include="Migrations\201311192121463_m-m-qastatus-dataset.Designer.cs">
+      <DependentUpon>201311192121463_m-m-qastatus-dataset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311192140132_field-possiblevalues.cs" />
+    <Compile Include="Migrations\201311192140132_field-possiblevalues.Designer.cs">
+      <DependentUpon>201311192140132_field-possiblevalues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311202004164_remove-field-config.cs" />
+    <Compile Include="Migrations\201311202004164_remove-field-config.Designer.cs">
+      <DependentUpon>201311202004164_remove-field-config.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311202007564_notrequiresourceinstrument.cs" />
+    <Compile Include="Migrations\201311202007564_notrequiresourceinstrument.Designer.cs">
+      <DependentUpon>201311202007564_notrequiresourceinstrument.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DatasetField.cs" />
+    <Compile Include="Controllers\DepartmentController.cs" />
+    <Compile Include="Controllers\FilesController.cs" />
+    <Compile Include="Controllers\MetadataPropertiesController.cs" />
+    <Compile Include="Models\Datastore.cs" />
+    <Compile Include="Models\Data\AdultWeir.cs" />
+    <Compile Include="Models\Data\AdultWeir_Detail.cs" />
+    <Compile Include="Models\Data\AdultWeir_Header.cs" />
+    <Compile Include="Models\Data\DataDetail.cs" />
+    <Compile Include="Models\Data\DataHeader.cs" />
+    <Compile Include="Models\Data\DatasetData.cs" />
+    <Compile Include="Models\Data\FishTransport.cs" />
+    <Compile Include="Models\Data\FishTransport_Detail.cs" />
+    <Compile Include="Models\Data\FishTransport_Header.cs" />
+    <Compile Include="Models\Data\WaterTemp.cs" />
+    <Compile Include="Models\Data\WaterTemp_Detail.cs" />
+    <Compile Include="Models\Data\WaterTemp_Header.cs" />
+    <Compile Include="Models\Field.cs" />
+    <Compile Include="Models\Dataset.cs" />
+    <Compile Include="Controllers\ProjectsController.cs" />
+    <Compile Include="Controllers\ProjectTypesController.cs" />
+    <Compile Include="Controllers\ActionController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308062135183_ProjectLocationLink.cs" />
+    <Compile Include="Migrations\201308062135183_ProjectLocationLink.Designer.cs">
+      <DependentUpon>201308062135183_ProjectLocationLink.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308062143323_UpdateSDEFeatureClass.cs" />
+    <Compile Include="Migrations\201308062143323_UpdateSDEFeatureClass.Designer.cs">
+      <DependentUpon>201308062143323_UpdateSDEFeatureClass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308082246557_ProjectDatesCanBeNull.cs" />
+    <Compile Include="Migrations\201308082246557_ProjectDatesCanBeNull.Designer.cs">
+      <DependentUpon>201308082246557_ProjectDatesCanBeNull.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308121559363_0812-1.cs" />
+    <Compile Include="Migrations\201308121559363_0812-1.Designer.cs">
+      <DependentUpon>201308121559363_0812-1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308152126327_FixMetdataProject.cs" />
+    <Compile Include="Migrations\201308152126327_FixMetdataProject.Designer.cs">
+      <DependentUpon>201308152126327_FixMetdataProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308211710102_projectownerdepartment.cs" />
+    <Compile Include="Migrations\201308211710102_projectownerdepartment.Designer.cs">
+      <DependentUpon>201308211710102_projectownerdepartment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308262141019_userroles.cs" />
+    <Compile Include="Migrations\201308262141019_userroles.Designer.cs">
+      <DependentUpon>201308262141019_userroles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201308301924041_filetypeextensions.cs" />
+    <Compile Include="Migrations\201308301924041_filetypeextensions.Designer.cs">
+      <DependentUpon>201308301924041_filetypeextensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AuditJournal.cs" />
+    <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\File.cs" />
+    <Compile Include="Models\FileType.cs" />
+    <Compile Include="Models\Instrument.cs" />
+    <Compile Include="Models\Location.cs" />
+    <Compile Include="Models\LocationType.cs" />
+    <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\MetadataEntity.cs" />
+    <Compile Include="Models\MetadataProperty.cs" />
+    <Compile Include="Models\MetadataValue.cs" />
+    <Compile Include="Models\Organization.cs" />
+    <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\ProjectLocation.cs" />
+    <Compile Include="Models\ProjectType.cs" />
+    <Compile Include="Models\QAStatus.cs" />
+    <Compile Include="Models\SdeFeatureClass.cs" />
+    <Compile Include="Models\ServicesContext.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserPreference.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\AuthorizationManager.cs" />
+    <Compile Include="Resources\TSVReader.cs" />
+    <Compile Include="Resources\CSVReader.cs" />
+    <Compile Include="Resources\EFFileRepository.cs" />
+    <Compile Include="Resources\ExcelReader.cs" />
+    <Compile Include="Resources\Filters\ProjectAuthAttribute.cs" />
+    <Compile Include="Resources\IFileRepository.cs" />
+    <Compile Include="Resources\ImportResultHelpers.cs" />
+    <Compile Include="Resources\MetadataHelper.cs" />
+    <Compile Include="Resources\UnhandledExceptionFilter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Readme\Elmah.SqlServer.sql" />
+    <Content Include="App_Readme\Elmah.SqlServer.txt" />
+    <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="index.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\uploads\" />
+    <Folder Include="Resources\Attributes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\PublishProfiles\data.ctuir.org-services-STAGE.pubxml" />
+    <None Include="Properties\PublishProfiles\data.ctuir.org-services.pubxml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Properties\PublishProfiles\gisweb02-production.pubxml" />
+    <None Include="Properties\PublishProfiles\gisweb02-stage.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201308052143115_InitialModels.resx">
+      <DependentUpon>201308052143115_InitialModels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308052219053_ProjectOrgTweak.resx">
+      <DependentUpon>201308052219053_ProjectOrgTweak.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308061705296_FilesController.resx">
+      <DependentUpon>201308061705296_FilesController.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308061716594_FixFile.resx">
+      <DependentUpon>201308061716594_FixFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308062135183_ProjectLocationLink.resx">
+      <DependentUpon>201308062135183_ProjectLocationLink.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308062143323_UpdateSDEFeatureClass.resx">
+      <DependentUpon>201308062143323_UpdateSDEFeatureClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308082246557_ProjectDatesCanBeNull.resx">
+      <DependentUpon>201308082246557_ProjectDatesCanBeNull.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308121559363_0812-1.resx">
+      <DependentUpon>201308121559363_0812-1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308152126327_FixMetdataProject.resx">
+      <DependentUpon>201308152126327_FixMetdataProject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308211710102_projectownerdepartment.resx">
+      <DependentUpon>201308211710102_projectownerdepartment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308262141019_userroles.resx">
+      <DependentUpon>201308262141019_userroles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201308301924041_filetypeextensions.resx">
+      <DependentUpon>201308301924041_filetypeextensions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311191804154_dataset-support.resx">
+      <DependentUpon>201311191804154_dataset-support.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311192121463_m-m-qastatus-dataset.resx">
+      <DependentUpon>201311192121463_m-m-qastatus-dataset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311192140132_field-possiblevalues.resx">
+      <DependentUpon>201311192140132_field-possiblevalues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311202004164_remove-field-config.resx">
+      <DependentUpon>201311202004164_remove-field-config.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311202007564_notrequiresourceinstrument.resx">
+      <DependentUpon>201311202007564_notrequiresourceinstrument.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311202247256_activities_models.resx">
+      <DependentUpon>201311202247256_activities_models.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201312112340144_adultweirdataset.resx">
+      <DependentUpon>201312112340144_adultweirdataset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201312112344164_adultweirdataset2.resx">
+      <DependentUpon>201312112344164_adultweirdataset2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201312112347453_adultweirdataset3.resx">
+      <DependentUpon>201312112347453_adultweirdataset3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201312112350385_adultweirdataset4.resx">
+      <DependentUpon>201312112350385_adultweirdataset4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201312162322363_order_fields1.resx">
+      <DependentUpon>201312162322363_order_fields1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201312232209129_controltypefield.resx">
+      <DependentUpon>201312232209129_controltypefield.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201401031650524_field-changes-1_3_14.resx">
+      <DependentUpon>201401031650524_field-changes-1_3_14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201401031853415_move-event-date.resx">
+      <DependentUpon>201401031853415_move-event-date.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201401282147253_update_sex_field.resx">
+      <DependentUpon>201401282147253_update_sex_field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201402181939099_rowlevelqastatus.resx">
+      <DependentUpon>201402181939099_rowlevelqastatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201402181947490_adddefaultqastatusfield.resx">
+      <DependentUpon>201402181947490_adddefaultqastatusfield.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201402182304595_fishnumcolumn.resx">
+      <DependentUpon>201402182304595_fishnumcolumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201402241759387_rowstatuscolumn.resx">
+      <DependentUpon>201402241759387_rowstatuscolumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201402242217488_updateconstraintactivityqa.resx">
+      <DependentUpon>201402242217488_updateconstraintactivityqa.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201402242228514_removeboolfrom-detail-fields.resx">
+      <DependentUpon>201402242228514_removeboolfrom-detail-fields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403072305289_adultweir_fields_tostandards.resx">
+      <DependentUpon>201403072305289_adultweir_fields_tostandards.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403172157257_project-editors.resx">
+      <DependentUpon>201403172157257_project-editors.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403172222348_user-imageurl.resx">
+      <DependentUpon>201403172222348_user-imageurl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403281712123_add-tempF-fields.resx">
+      <DependentUpon>201403281712123_add-tempF-fields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404021830573_Datastore-for-dataset.resx">
+      <DependentUpon>201404021830573_Datastore-for-dataset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404041743182_add_fish_transport.resx">
+      <DependentUpon>201404041743182_add_fish_transport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404101445183_add-rule-controltype-fields.resx">
+      <DependentUpon>201404101445183_add-rule-controltype-fields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404101449068_add-field-rule.resx">
+      <DependentUpon>201404101449068_add-field-rule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404102017282_addFinClip.resx">
+      <DependentUpon>201404102017282_addFinClip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404102039599_addGirthTrapLocationFields.resx">
+      <DependentUpon>201404102039599_addGirthTrapLocationFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404102048372_addPassageFields.resx">
+      <DependentUpon>201404102048372_addPassageFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404102051105_PassageTimeNullable.resx">
+      <DependentUpon>201404102051105_PassageTimeNullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404242210153_UGR-newfields.resx">
+      <DependentUpon>201404242210153_UGR-newfields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405011823086_stockfield.resx">
+      <DependentUpon>201405011823086_stockfield.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405012259433_new-field-columns.resx">
+      <DependentUpon>201405012259433_new-field-columns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405072221479_after-migration--add-field-category.resx">
+      <DependentUpon>201405072221479_after-migration--add-field-category.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405091716545_watertemp.resx">
+      <DependentUpon>201405091716545_watertemp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405091915202_watertemp-optionalwatertempvalues.resx">
+      <DependentUpon>201405091915202_watertemp-optionalwatertempvalues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405161655371_instrument-accuracycheck.resx">
+      <DependentUpon>201405161655371_instrument-accuracycheck.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405161656234_instrument-type-restored.resx">
+      <DependentUpon>201405161656234_instrument-type-restored.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405161703034_instrument-accuracycheck-rename.resx">
+      <DependentUpon>201405161703034_instrument-accuracycheck-rename.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405161742016_tweak-instrument.resx">
+      <DependentUpon>201405161742016_tweak-instrument.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405192204341_activity-instrument.resx">
+      <DependentUpon>201405192204341_activity-instrument.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406022001009_addFieldActivityType.resx">
+      <DependentUpon>201406022001009_addFieldActivityType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406022146385_singlewaterbodies-for-locations.resx">
+      <DependentUpon>201406022146385_singlewaterbodies-for-locations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406022152400_single-waterbody-forlocation-fix.resx">
+      <DependentUpon>201406022152400_single-waterbody-forlocation-fix.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:60681/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>
