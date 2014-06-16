@@ -61,6 +61,31 @@ namespace services.Controllers
          * */
 
 
+        public DataTable GetHeadersDataForDataset(int id)
+        {
+            var db = ServicesContext.Current;
+            Dataset dataset = db.Datasets.Find(id);
+            if (dataset == null)
+            {
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            }
+
+            string query = "SELECT h.* FROM " + dataset.Datastore.TablePrefix + "_Header_VW h JOIN Activities a on a.Id = h.ActivityId WHERE a.DatasetId = " + dataset.Id;
+
+            DataTable dt = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+                }
+            }
+
+            return dt;
+        }
+
 
         [HttpPost]
         public IEnumerable<MetadataValue> GetMetadataFor(JObject jsonData)
