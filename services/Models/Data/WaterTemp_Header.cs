@@ -7,8 +7,6 @@ namespace services.Models.Data
 {
     public class WaterTemp_Header : DataHeader
     {
-        public double? AirTemperature { get; set; }
-        public double? AirTemperatureF { get; set; }
         public string TimeStart { get; set; }
         public string TimeEnd { get; set; }
         public string Technicians { get; set; }

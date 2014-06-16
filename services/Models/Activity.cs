@@ -21,6 +21,7 @@ namespace services.Models
         public DateTime ActivityDate { get; set; } //date of actual activity event
         public int? InstrumentId { get; set; }
         public int? AccuracyCheckId { get; set; } //applied to this data
+        public int? PostAccuracyCheckId { get; set; } //if applicable.
 
         public virtual User User { get; set; }
 
@@ -32,6 +33,7 @@ namespace services.Models
         public virtual Location Location { get; set; }
         public virtual Instrument Instrument { get; set; }
         public virtual InstrumentAccuracyCheck AccuracyCheck { get; set; }
+        public virtual InstrumentAccuracyCheck PostAccuracyCheck { get; set; }
 
         
         [NotMapped]

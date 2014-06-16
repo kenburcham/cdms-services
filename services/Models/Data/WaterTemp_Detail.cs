@@ -10,6 +10,8 @@ namespace services.Models.Data
         public DateTime ReadingDateTime { get; set; }
         public double? WaterTemperature { get; set; }
         public double? WaterTemperatureF { get; set; }
+        public double? AirTemperature { get; set; }
+        public double? AirTemperatureF { get; set; }
         public double? WaterLevel { get; set; }
         public double? TempAToD { get; set; }
         public double? BatteryVolts { get; set; }

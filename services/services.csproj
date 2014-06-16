@@ -358,6 +358,14 @@
     <Compile Include="Migrations\201406022152400_single-waterbody-forlocation-fix.Designer.cs">
       <DependentUpon>201406022152400_single-waterbody-forlocation-fix.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201406161743359_move-airtemp-fields-todetail.cs" />
+    <Compile Include="Migrations\201406161743359_move-airtemp-fields-todetail.Designer.cs">
+      <DependentUpon>201406161743359_move-airtemp-fields-todetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406161854485_add-activity-post-accuracycheck.cs" />
+    <Compile Include="Migrations\201406161854485_add-activity-post-accuracycheck.Designer.cs">
+      <DependentUpon>201406161854485_add-activity-post-accuracycheck.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
@@ -678,6 +686,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201406022152400_single-waterbody-forlocation-fix.resx">
       <DependentUpon>201406022152400_single-waterbody-forlocation-fix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406161743359_move-airtemp-fields-todetail.resx">
+      <DependentUpon>201406161743359_move-airtemp-fields-todetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406161854485_add-activity-post-accuracycheck.resx">
+      <DependentUpon>201406161854485_add-activity-post-accuracycheck.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

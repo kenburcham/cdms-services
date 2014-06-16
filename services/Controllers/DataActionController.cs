@@ -453,6 +453,7 @@ namespace services.Controllers
                     activity.ActivityTypeId = 1;
                     activity.InstrumentId = activity_json.InstrumentId;
                     activity.AccuracyCheckId = activity_json.AccuracyCheckId;
+                    activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
 
                     //activity.CreateDate = DateTime.Now;
 
@@ -734,6 +735,7 @@ namespace services.Controllers
                                 activity.CreateDate = DateTime.Now;
                                 activity.InstrumentId = activity_json.InstrumentId;
                                 activity.AccuracyCheckId = activity_json.AccuracyCheckId;
+                                activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
 
                                 /*
                                 //check for duplicates.  If it is a duplicate, add it to our list and bail out.
