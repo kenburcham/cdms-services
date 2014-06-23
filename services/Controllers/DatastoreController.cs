@@ -201,6 +201,55 @@ namespace services.Controllers
         }
 
         [HttpPost]
+        public HttpResponseMessage UpdateFile(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+            User me = AuthorizationManager.getCurrentUser();
+            Project project = db.Projects.Find(json.ProjectId.ToObject<int>());
+            if (project == null)
+                throw new Exception("Configuration error.  Please try again.");
+
+            services.Models.File in_file = json.File.ToObject<services.Models.File>();
+
+            services.Models.File existing_file = project.Files.Where(o => o.Id == in_file.Id).SingleOrDefault();
+
+            if (existing_file == null)
+                throw new Exception("File not found.");
+
+            existing_file.Title = in_file.Title;
+            existing_file.Description = in_file.Description;
+            db.Entry(existing_file).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        public HttpResponseMessage DeleteFile(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+            User me = AuthorizationManager.getCurrentUser();
+            Project project = db.Projects.Find(json.ProjectId.ToObject<int>());
+            if (project == null)
+                throw new Exception("Configuration error.  Please try again.");
+
+            services.Models.File in_file = json.File.ToObject<services.Models.File>();
+
+            services.Models.File existing_file = project.Files.Where(o => o.Id == in_file.Id).SingleOrDefault();
+
+            if (existing_file == null)
+                throw new Exception("File not found.");
+
+            project.Files.Remove(existing_file);
+            db.Entry(project).State = EntityState.Modified;
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+
+        [HttpPost]
         public HttpResponseMessage SaveProjectLocation(JObject jsonData)
         {
             var db = ServicesContext.Current;

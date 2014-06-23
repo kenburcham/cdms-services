@@ -1016,6 +1016,134 @@ namespace services.Controllers
 
         }
 
+        //UploadProjectFile - add a file to this project.
+        /**
+         * Handle uploaded files
+         * IEnumerable<File>
+         */
+        public Task<HttpResponseMessage> UploadProjectFile()
+        {
+            logger.Debug("starting to process incoming files.");
+
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+            }
+
+            string root = System.Web.HttpContext.Current.Server.MapPath("~/uploads");
+            string rootUrl = Request.RequestUri.AbsoluteUri.Replace(Request.RequestUri.AbsolutePath, String.Empty);
+
+            logger.Debug("saving files to location: " + root);
+            logger.Debug(" and the root url = " + rootUrl);
+
+            var provider = new MultipartFormDataStreamProvider(root);
+
+            User me = AuthorizationManager.getCurrentUser();
+
+            var db = ServicesContext.Current;
+
+            var task = Request.Content.ReadAsMultipartAsync(provider).
+                ContinueWith<HttpResponseMessage>(o =>
+                {
+
+                    if (o.IsFaulted || o.IsCanceled)
+                    {
+                        logger.Debug("Error: " + o.Exception.Message);
+                        throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.InternalServerError, o.Exception));
+                    }
+
+                    //Look up our project
+                    Int32 ProjectId = Convert.ToInt32(provider.FormData.Get("ProjectId"));
+                    logger.Debug("And we think the projectid === " + ProjectId);
+
+                    Project project = db.Projects.Find(ProjectId);
+
+                    if (project == null)
+                        throw new Exception("Project ID not found: " + ProjectId);
+
+                    //TODO: collaborators?
+                    //security check :: you can only edit your own projects
+//                    if (project.Owner.Id != me.Id)
+//                    {
+//                        throw new Exception("NotAuthorized: You can only edit projects you own.");
+//                    }
+//editors too.  -- look them up  TODO
+
+                    //Now iterate through the files that just came in
+                    List<services.Models.File> files = new List<services.Models.File>();
+
+                    foreach (MultipartFileData file in provider.FileData)
+                    {
+
+                        logger.Debug("Filename = " + file.LocalFileName);
+                        logger.Debug("Orig = " + file.Headers.ContentDisposition.FileName);
+                        logger.Debug("Name? = " + file.Headers.ContentDisposition.Name);
+
+                        //var fileIndex = getFileIndex(file.Headers.ContentDisposition.Name); //"uploadedfile0" -> 0
+                        var fileIndex = "0";
+                        logger.Debug("Fileindex = " + fileIndex);
+                        var filename = file.Headers.ContentDisposition.FileName;
+                        filename = filename.Replace("\"", string.Empty);
+
+                        if (!String.IsNullOrEmpty(filename))
+                        {
+                            try
+                            {
+                                var newFileName = ActionController.relocateProjectFile(
+                                                file.LocalFileName,
+                                                ProjectId,
+                                                filename,
+                                                false);
+
+                                var info = new System.IO.FileInfo(newFileName);
+
+                                services.Models.File newFile = new services.Models.File();
+                                newFile.Title = provider.FormData.Get("Title"); //"Title_1, etc.
+                                logger.Debug("Title = " + newFile.Title);
+
+                                newFile.Description = provider.FormData.Get("Description"); //"Description_1, etc.
+                                logger.Debug("Desc = " + newFile.Description);
+
+                                newFile.Name = info.Name;//.Headers.ContentDisposition.FileName;
+                                newFile.Link = rootUrl + "/servicesSTAGE/uploads/" + ProjectId + "/" + info.Name; //file.LocalFileName;
+                                newFile.Size = (info.Length / 1024).ToString(); //file.Headers.ContentLength.ToString();
+                                newFile.FileTypeId = FileType.getFileTypeFromFilename(info);
+                                newFile.UserId = me.Id;
+                                logger.Debug(" Adding file " + newFile.Name + " at " + newFile.Link);
+
+                                files.Add(newFile);
+                            }
+                            catch (Exception e)
+                            {
+                                logger.Debug("Error: " + e.ToString());
+                            }
+                        }
+                    }
+
+                    //Add files to database for this project.
+                    if (files.Count() > 0)
+                    {
+                        logger.Debug("woot -- we have file objects to save");
+                        foreach (var file in files)
+                        {
+                            project.Files.Add(file);
+                        }
+                        db.Entry(project).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+
+                    logger.Debug("Done saving files.");
+
+                    return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                    
+                    
+
+                });
+
+            return task;
+
+        }
+
 
         [HttpPost]
         public HttpResponseMessage SaveProject(JObject jsonData)
