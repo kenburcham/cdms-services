@@ -366,6 +366,22 @@
     <Compile Include="Migrations\201406161854485_add-activity-post-accuracycheck.Designer.cs">
       <DependentUpon>201406161854485_add-activity-post-accuracycheck.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201406252144430_add-timezoneoffset-toactivity.cs" />
+    <Compile Include="Migrations\201406252144430_add-timezoneoffset-toactivity.Designer.cs">
+      <DependentUpon>201406252144430_add-timezoneoffset-toactivity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406252208563_gmtreadingdatetime-towatertemp.cs" />
+    <Compile Include="Migrations\201406252208563_gmtreadingdatetime-towatertemp.Designer.cs">
+      <DependentUpon>201406252208563_gmtreadingdatetime-towatertemp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406262028597_timezoneoffset-to-timezoneobject.cs" />
+    <Compile Include="Migrations\201406262028597_timezoneoffset-to-timezoneobject.Designer.cs">
+      <DependentUpon>201406262028597_timezoneoffset-to-timezoneobject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406262232141_nullable-gmt-datetime.cs" />
+    <Compile Include="Migrations\201406262232141_nullable-gmt-datetime.Designer.cs">
+      <DependentUpon>201406262232141_nullable-gmt-datetime.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
@@ -692,6 +708,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201406161854485_add-activity-post-accuracycheck.resx">
       <DependentUpon>201406161854485_add-activity-post-accuracycheck.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406252144430_add-timezoneoffset-toactivity.resx">
+      <DependentUpon>201406252144430_add-timezoneoffset-toactivity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406252208563_gmtreadingdatetime-towatertemp.resx">
+      <DependentUpon>201406252208563_gmtreadingdatetime-towatertemp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406262028597_timezoneoffset-to-timezoneobject.resx">
+      <DependentUpon>201406262028597_timezoneoffset-to-timezoneobject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406262232141_nullable-gmt-datetime.resx">
+      <DependentUpon>201406262232141_nullable-gmt-datetime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

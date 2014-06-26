@@ -31,6 +31,11 @@ namespace services.Controllers
     public partial class DataActionController : ApiController
     {
 
+        [HttpGet]
+        public IEnumerable<TimeZoneInfo> GetTimeZones()
+        {
+            return TimeZoneInfo.GetSystemTimeZones();           
+        }
 
         [HttpGet]
         public IEnumerable<LocationType> GetLocationTypes()

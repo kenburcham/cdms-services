@@ -479,6 +479,7 @@ namespace services.Controllers
                     activity.InstrumentId = activity_json.InstrumentId;
                     activity.AccuracyCheckId = activity_json.AccuracyCheckId;
                     activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
+                    activity.Timezone = activity_json.Timezone;
 
                     //activity.CreateDate = DateTime.Now;
 
@@ -747,7 +748,9 @@ namespace services.Controllers
                                 //TODO -- this is a very bad idea if the date is wrong...
                                 logger.Debug("Ooops had an error converting date: " + activity_json.ActivityDate);
                                 logger.Debug(e.ToString());
-                                activity.ActivityDate = DateTime.Now;
+
+                                throw e;
+
                             }
 
                             try
@@ -761,7 +764,9 @@ namespace services.Controllers
                                 activity.InstrumentId = activity_json.InstrumentId;
                                 activity.AccuracyCheckId = activity_json.AccuracyCheckId;
                                 activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
+                                activity.Timezone = activity_json.Timezone;
 
+                                logger.Debug("and we have finished parameters.");
                                 /*
                                 //check for duplicates.  If it is a duplicate, add it to our list and bail out.
                                 if (activity.isDuplicate())
@@ -833,7 +838,7 @@ namespace services.Controllers
                             }
                             catch (Exception e)
                             {
-                                logger.Debug("An error occurred: ", e);
+                                logger.Debug("An error occurred: ", e.ToString());
                                 throw e; //rethrow so that it'll come back as an error in the client.
                             }
 

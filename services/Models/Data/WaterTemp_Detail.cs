@@ -8,6 +8,7 @@ namespace services.Models.Data
     public class WaterTemp_Detail : DataDetail
     {
         public DateTime ReadingDateTime { get; set; }
+        public DateTime? GMTReadingDateTime { get; set; }
         public double? WaterTemperature { get; set; }
         public double? WaterTemperatureF { get; set; }
         public double? AirTemperature { get; set; }

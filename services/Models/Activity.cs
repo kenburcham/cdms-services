@@ -22,6 +22,7 @@ namespace services.Models
         public int? InstrumentId { get; set; }
         public int? AccuracyCheckId { get; set; } //applied to this data
         public int? PostAccuracyCheckId { get; set; } //if applicable.
+        public string Timezone { get; set; }  //timezone offset from UTC for this activity (if applicable) in ms
 
         public virtual User User { get; set; }
 
