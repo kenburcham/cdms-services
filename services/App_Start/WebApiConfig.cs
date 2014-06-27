@@ -41,6 +41,9 @@ namespace services
             // For more information, refer to: http://www.asp.net/web-api
             config.EnableSystemDiagnosticsTracing();
             config.Filters.Add(new UnhandledExceptionFilter());
+
+            //uncomment to allow json to be returned directly to browsers
+            //config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("text/html"));
         }
     }
 }

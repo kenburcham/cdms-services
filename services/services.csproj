@@ -382,6 +382,14 @@
     <Compile Include="Migrations\201406262232141_nullable-gmt-datetime.Designer.cs">
       <DependentUpon>201406262232141_nullable-gmt-datetime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201406262247197_update-watertemp-fields.cs" />
+    <Compile Include="Migrations\201406262247197_update-watertemp-fields.Designer.cs">
+      <DependentUpon>201406262247197_update-watertemp-fields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406262303532_fix-watertemp-field-again.cs" />
+    <Compile Include="Migrations\201406262303532_fix-watertemp-field-again.Designer.cs">
+      <DependentUpon>201406262303532_fix-watertemp-field-again.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
@@ -720,6 +728,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201406262232141_nullable-gmt-datetime.resx">
       <DependentUpon>201406262232141_nullable-gmt-datetime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406262247197_update-watertemp-fields.resx">
+      <DependentUpon>201406262247197_update-watertemp-fields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406262303532_fix-watertemp-field-again.resx">
+      <DependentUpon>201406262303532_fix-watertemp-field-again.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

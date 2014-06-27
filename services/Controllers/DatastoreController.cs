@@ -359,6 +359,9 @@ namespace services.Controllers
                 throw new Exception("Configuration error.  Please try again.");
 
             Instrument instrument = json.Instrument.ToObject<Instrument>();
+            instrument.OwningDepartmentId = json.Instrument.OwningDepartmentId.ToObject<int>();
+
+            logger.Debug("The id == " + instrument.OwningDepartmentId);
 
             //if there is an instrument id already set, then we'll just update the instrument and call it good.
             //  otherwise we'll create the new instrument and a relationship to the project.
@@ -366,7 +369,6 @@ namespace services.Controllers
             if (instrument.Id == 0)
             {
                 instrument.UserId = me.Id;
-                instrument.OwningDepartmentId = Department.DEFAULT_DEPARTMENT;
                 p.Instruments.Add(instrument);
                 logger.Debug("created new instrument");
             }

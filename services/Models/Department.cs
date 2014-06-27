@@ -15,7 +15,6 @@ namespace services.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
-        [JsonIgnore]
         public virtual Organization Organization { get; set; }
     }
 }
