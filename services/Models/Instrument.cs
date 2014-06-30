@@ -18,6 +18,8 @@ namespace services.Models
         public string Description { get; set; }
         public string SerialNumber { get; set; }
         public string Manufacturer { get; set; }
+        public string Model { get; set; }
+        public int? PurchasingProgramProjectId { get; set; }
         public int OwningDepartmentId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime? PurchaseDate { get; set; }

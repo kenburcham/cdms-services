@@ -390,6 +390,10 @@
     <Compile Include="Migrations\201406262303532_fix-watertemp-field-again.Designer.cs">
       <DependentUpon>201406262303532_fix-watertemp-field-again.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201406272211383_add-fields-to-instrument.cs" />
+    <Compile Include="Migrations\201406272211383_add-fields-to-instrument.Designer.cs">
+      <DependentUpon>201406272211383_add-fields-to-instrument.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
@@ -734,6 +738,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201406262303532_fix-watertemp-field-again.resx">
       <DependentUpon>201406262303532_fix-watertemp-field-again.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406272211383_add-fields-to-instrument.resx">
+      <DependentUpon>201406272211383_add-fields-to-instrument.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

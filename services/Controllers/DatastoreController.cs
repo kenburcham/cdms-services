@@ -301,8 +301,16 @@ namespace services.Controllers
 
             ac.UserId = me.Id;
 
-            instrument.AccuracyChecks.Add(ac);
-            db.SaveChanges();
+            if (ac.Id == 0)
+            {
+                instrument.AccuracyChecks.Add(ac);
+                db.SaveChanges();
+            }
+            else
+            {
+                db.Entry(ac).State = EntityState.Modified;
+                db.SaveChanges();
+            }
 
             return new HttpResponseMessage(HttpStatusCode.OK);
 
