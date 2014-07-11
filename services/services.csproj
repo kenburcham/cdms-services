@@ -394,6 +394,22 @@
     <Compile Include="Migrations\201406272211383_add-fields-to-instrument.Designer.cs">
       <DependentUpon>201406272211383_add-fields-to-instrument.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201407011600197_appraisal-table.cs" />
+    <Compile Include="Migrations\201407011600197_appraisal-table.Designer.cs">
+      <DependentUpon>201407011600197_appraisal-table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201407022159060_scottod-watertemp-fields.cs" />
+    <Compile Include="Migrations\201407022159060_scottod-watertemp-fields.Designer.cs">
+      <DependentUpon>201407022159060_scottod-watertemp-fields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201407091636509_appraisal-field-requirements.cs" />
+    <Compile Include="Migrations\201407091636509_appraisal-field-requirements.Designer.cs">
+      <DependentUpon>201407091636509_appraisal-field-requirements.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201407111808008_dataset-config.cs" />
+    <Compile Include="Migrations\201407111808008_dataset-config.Designer.cs">
+      <DependentUpon>201407111808008_dataset-config.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
@@ -423,6 +439,9 @@
     <Compile Include="Models\Data\AdultWeir.cs" />
     <Compile Include="Models\Data\AdultWeir_Detail.cs" />
     <Compile Include="Models\Data\AdultWeir_Header.cs" />
+    <Compile Include="Models\Data\Appraisal.cs" />
+    <Compile Include="Models\Data\Appraisal_Detail.cs" />
+    <Compile Include="Models\Data\Appraisal_Header.cs" />
     <Compile Include="Models\Data\DataDetail.cs" />
     <Compile Include="Models\Data\DataHeader.cs" />
     <Compile Include="Models\Data\DatasetData.cs" />
@@ -741,6 +760,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201406272211383_add-fields-to-instrument.resx">
       <DependentUpon>201406272211383_add-fields-to-instrument.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201407011600197_appraisal-table.resx">
+      <DependentUpon>201407011600197_appraisal-table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201407022159060_scottod-watertemp-fields.resx">
+      <DependentUpon>201407022159060_scottod-watertemp-fields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201407091636509_appraisal-field-requirements.resx">
+      <DependentUpon>201407091636509_appraisal-field-requirements.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201407111808008_dataset-config.resx">
+      <DependentUpon>201407111808008_dataset-config.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -30,6 +30,23 @@ namespace services.Controllers
         {
             var db = ServicesContext.Current;
             //logger.Info("GetProjects called!");
+
+            //this is one way to neck down what gets returned... loading all the files is very time consuming for the big list...
+            /*
+            var results = db.Projects.Select(p => new
+            {
+                p.Id,
+                p.ProjectType,
+                p.Name,
+                p.Description,
+                p.CreateDateTime,
+                p.OrganizationId,
+                p.OwnerId,
+                p.Metadata
+            });
+            */
+            //return results.AsEnumerable();
+
             return db.Projects.AsEnumerable();
         }
 

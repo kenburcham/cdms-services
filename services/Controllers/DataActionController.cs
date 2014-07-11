@@ -547,9 +547,12 @@ namespace services.Controllers
                         }
                         else
                         {
-                            logger.Debug("Dunno why, but objval was null." + header_field + " we are going to save a new one.");
-                            header_updated = true;
-                            break;
+                            if (header_field.Value.ToString() != "")
+                            {
+                                logger.Debug("Dunno why, but objval was null." + header_field + " we are going to save a new one.");
+                                header_updated = true;
+                                break;
+                            }
                         }
                     }
 

@@ -29,6 +29,7 @@ namespace services.Models
         public int DefaultActivityQAStatusId { get; set; }
         public int StatusId { get; set; } //active, inactive, deleted
         public int? DatastoreId { get; set; }
+        public string Config { get; set; } //config for this dataset...
 
         public DateTime CreateDateTime { get; set; }
 
@@ -88,12 +89,12 @@ namespace services.Models
             IEnumerable<string> labels = null;
             try
             {
-                labels = new string[] { "ActivityDate", "Location" };
+                labels = new string[] { "ActivityDate" };
 
                 labels = labels
                   .Concat(this.Fields.Where(o => o.FieldRoleId == FieldRole.HEADER).OrderBy(o => o.Label).Select(o => o.Label + " " + o.Field.Units))
                   .Concat(this.Fields.Where(o => o.FieldRoleId == FieldRole.DETAIL).OrderBy(o => o.Label).Select(o => o.Label + " " + o.Field.Units))
-                  .Concat(new List<string>(new string[] { "ActivityByUser", "CreateDate", "QAStatus", "ActivityQAComments", "ActivityQAUser", "Source","LocationId","ActivityQAStatusId","Dataset","ActivityId" }));
+                  .Concat(new List<string>(new string[] { "CreateDate", "QAStatus", "ActivityQAComments", "ActivityQAUser", "Source","LocationId","ActivityQAStatusId","DatasetId","ActivityId" }));
 
                 foreach (var item in labels)
                 {

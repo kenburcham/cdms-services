@@ -17,6 +17,7 @@ namespace services.Models.Data
         public string SamplePeriod { get; set; } // 1s, 1m, 1h, 1d, etc.
         public string SampleTempUnit { get; set; } //C / F
         public string FieldActivityType { get; set; }
+        public string DeployTime { get; set; }
         
     }
 }

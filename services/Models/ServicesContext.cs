@@ -64,6 +64,8 @@ namespace services.Models
         public DbSet<WaterTemp_Detail> WaterTemp_Detail { get; set; }
         public DbSet<WaterTemp_Header> WaterTemp_Header { get; set; }
 
+        public DbSet<Appraisal_Detail> Appraisal_Detail { get; set; }
+        public DbSet<Appraisal_Header> Appraisal_Header { get; set; }
 
 
         //get the dbset by name rather than by type

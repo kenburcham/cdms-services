@@ -16,6 +16,7 @@ namespace services.Models.Data
         public double? WaterLevel { get; set; }
         public double? TempAToD { get; set; }
         public double? BatteryVolts { get; set; }
+        public double? Conductivity { get; set; }
 
     }
 }
