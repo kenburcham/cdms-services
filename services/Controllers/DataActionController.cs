@@ -717,6 +717,8 @@ namespace services.Controllers
 
             //var duplicateActivities = new List<Activity>();
 
+            var new_records = new List<Activity>();
+
             //wrap this in a transaction
             
             
@@ -838,6 +840,7 @@ namespace services.Controllers
                                 scope.Complete(); //complete the transaction since nothing blew up!
                                 
                                 //logger.Debug(((JObject)JToken.FromObject(data)).ToString());
+                                new_records.Add(activity);
                             }
                             catch (Exception e)
                             {
@@ -873,14 +876,14 @@ namespace services.Controllers
             var importResult = new ImportResult();
             importResult.duplicates = duplicateActivities;
             importResult.success = true;
-
-            string result = JsonConvert.SerializeObject(importResult);
+            */
+            string result = JsonConvert.SerializeObject(new_records);
             
             HttpResponseMessage resp = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             resp.Content = new System.Net.Http.StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
 
-            return resp;
-            */
+            //return resp;
+            
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
@@ -1128,6 +1131,8 @@ namespace services.Controllers
                         }
                     }
 
+                    List<services.Models.File> thefiles = new List<services.Models.File>();
+
                     //Add files to database for this project.
                     if (files.Count() > 0)
                     {
@@ -1135,14 +1140,19 @@ namespace services.Controllers
                         foreach (var file in files)
                         {
                             project.Files.Add(file);
+                            thefiles.Add(file);
                         }
                         db.Entry(project).State = EntityState.Modified;
                         db.SaveChanges();
+                        
                     }
 
                     logger.Debug("Done saving files.");
+                    var result = JsonConvert.SerializeObject(thefiles);
+                    HttpResponseMessage resp = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                    resp.Content = new System.Net.Http.StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
 
-                    return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                    return resp;
                     
                     
 

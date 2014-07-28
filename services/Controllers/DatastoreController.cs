@@ -279,9 +279,18 @@ namespace services.Controllers
                 db.SaveChanges();
                 logger.Debug("success updating EXISTING project location!");
             }
-            
 
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            string result = JsonConvert.SerializeObject(location);
+
+            //TODO: actual error/success message handling
+            //string result = "{\"message\": \"Success\"}";
+
+            HttpResponseMessage resp = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            resp.Content = new System.Net.Http.StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
+
+            return resp;
+
+            //return new HttpResponseMessage(HttpStatusCode.OK);
             
         }
 
@@ -429,9 +438,13 @@ namespace services.Controllers
 
             int DatasetId = json.DatasetId.ToObject<int>();
             var dataset = db.Datasets.Find(DatasetId);
+            if (dataset == null)
+                throw new Exception("Dataset could not be found: " + DatasetId);
 
             int FieldId = json.FieldId.ToObject<int>();
             var field = db.DatasetFields.Find(FieldId);
+            if (field == null)
+                throw new Exception("Dataset could not be found: " + DatasetId);
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {

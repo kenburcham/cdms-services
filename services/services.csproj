@@ -410,6 +410,18 @@
     <Compile Include="Migrations\201407111808008_dataset-config.Designer.cs">
       <DependentUpon>201407111808008_dataset-config.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201407171712219_appraisalfield.cs" />
+    <Compile Include="Migrations\201407171712219_appraisalfield.Designer.cs">
+      <DependentUpon>201407171712219_appraisalfield.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201407241622052_appraisalfields_additions.cs" />
+    <Compile Include="Migrations\201407241622052_appraisalfields_additions.Designer.cs">
+      <DependentUpon>201407241622052_appraisalfields_additions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201407251849036_updatedtsr-appraisal.cs" />
+    <Compile Include="Migrations\201407251849036_updatedtsr-appraisal.Designer.cs">
+      <DependentUpon>201407251849036_updatedtsr-appraisal.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
@@ -772,6 +784,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201407111808008_dataset-config.resx">
       <DependentUpon>201407111808008_dataset-config.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201407171712219_appraisalfield.resx">
+      <DependentUpon>201407171712219_appraisalfield.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201407241622052_appraisalfields_additions.resx">
+      <DependentUpon>201407241622052_appraisalfields_additions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201407251849036_updatedtsr-appraisal.resx">
+      <DependentUpon>201407251849036_updatedtsr-appraisal.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
