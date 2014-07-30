@@ -24,6 +24,13 @@ namespace services.Models.Data
         public string GrazingLeaseFiles { get; set; }
         public string AllotmentPhotoFiles { get; set; }
         public string RegionalOfficeReviewFiles { get; set; }
+        public string HasTimber { get; set; }
+        public string IsMappable { get; set; }
+        public double? Acres { get; set; }
+        public string PriorityType { get; set; }
+        public string LegalDescription { get; set; }
+
+
 
     }
 }

@@ -13,7 +13,7 @@ using services.Models;
 
 namespace services.Controllers
 {
-    //[System.Web.Http.Authorize]
+    [System.Web.Http.Authorize]
     public class DatasetsController : ApiController
     {
         private static Logger logger = LogManager.GetCurrentClassLogger(); 

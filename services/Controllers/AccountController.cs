@@ -15,6 +15,7 @@ namespace services.Controllers
     {
         public bool Success = false;
         public string Message = "";
+        public User User = null;
     }
 
     public class AccountController : ApiController
@@ -77,6 +78,7 @@ namespace services.Controllers
                     System.Web.HttpContext.Current.User = principal;
 
                     result.Success = true;
+                    result.User = user;
                     result.Message = "Successfully logged in.";
 
                 }

@@ -17,6 +17,9 @@ namespace services.Models.Data
         public int? AppraisalValue { get; set; }
         public DateTime? AppraisalValuationDate { get; set; }
         public string Appraiser { get; set; }
+        public string TypeOfTransaction { get; set; }
+        public string PartiesInvolved { get; set; }
+        public string AppraisalProjectType { get; set; }
 
     }
 }

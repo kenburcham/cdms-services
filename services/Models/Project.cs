@@ -13,6 +13,8 @@ namespace services.Models
         
         private static Logger logger = LogManager.GetCurrentClassLogger(); 
 
+        private const int SUPERUSER_KEN = 1;
+        private const int SUPERUSER_COLETTE = 2;
 
         public int Id { get; set; }
         
@@ -38,6 +40,24 @@ namespace services.Models
         [InverseProperty("ProjectInstruments")]
         public virtual List<Instrument> Instruments { get; set; }
 
+        public bool isOwnerOrEditor(User user)
+        {
+            if (user.Id == this.Owner.Id)
+                return true;
+
+            foreach (var editor in this.Editors)
+            {
+                if (editor.Id == user.Id)
+                    return true;
+            }
+
+            //superusers
+            if (user.Id == SUPERUSER_KEN || user.Id == SUPERUSER_COLETTE)
+                return true;
+
+
+            return false;
+        }
 
         /**
          * Set with list of metadata values populated with: MetadataPropertyId, Values, UserId 

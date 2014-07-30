@@ -28,6 +28,7 @@ using services.Resources;
 
 namespace services.Controllers
 {
+    [System.Web.Http.Authorize]
     public partial class DataActionController : ApiController
     {
 
@@ -215,6 +216,9 @@ namespace services.Controllers
             if (project == null)
                 throw new Exception("Configuration error.  Please try again.");
 
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
             services.Models.File in_file = json.File.ToObject<services.Models.File>();
 
             services.Models.File existing_file = project.Files.Where(o => o.Id == in_file.Id).SingleOrDefault();
@@ -240,6 +244,9 @@ namespace services.Controllers
             if (project == null)
                 throw new Exception("Configuration error.  Please try again.");
 
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
             services.Models.File in_file = json.File.ToObject<services.Models.File>();
 
             services.Models.File existing_file = project.Files.Where(o => o.Id == in_file.Id).SingleOrDefault();
@@ -263,6 +270,9 @@ namespace services.Controllers
             Project project = db.Projects.Find(json.ProjectId.ToObject<int>());
             if (project == null)
                 throw new Exception("Configuration error.  Please try again.");
+
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
 
             Location location = json.Location.ToObject<Location>();
 
@@ -332,7 +342,10 @@ namespace services.Controllers
             dynamic json = jsonData;
             User me = AuthorizationManager.getCurrentUser();
             Project project = db.Projects.Find(json.ProjectId.ToObject<int>());
-            
+
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
             Instrument instrument = db.Instruments.Find(json.Instrument.Id.ToObject<int>());
 
             if (project == null || instrument == null)
@@ -353,6 +366,10 @@ namespace services.Controllers
             dynamic json = jsonData;
             User me = AuthorizationManager.getCurrentUser();
             Project p = db.Projects.Find(json.ProjectId.ToObject<int>());
+
+            if (!p.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
             Instrument instrument = db.Instruments.Find(json.InstrumentId.ToObject<int>());
             if (p == null || instrument == null)
                 throw new Exception("Configuration error.  Please try again.");
@@ -374,6 +391,9 @@ namespace services.Controllers
             Project p = db.Projects.Find(json.ProjectId.ToObject<int>());
             if (p == null)
                 throw new Exception("Configuration error.  Please try again.");
+
+            if (!p.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
 
             Instrument instrument = json.Instrument.ToObject<Instrument>();
             instrument.OwningDepartmentId = json.Instrument.OwningDepartmentId.ToObject<int>();

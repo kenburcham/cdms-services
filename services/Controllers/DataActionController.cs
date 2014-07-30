@@ -25,41 +25,10 @@ using services.Resources;
 
 namespace services.Controllers
 {
+    [Authorize]
     public partial class DataActionController : ApiController
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-
-        /*
-        [AllowAnonymous]
-        [HttpPost]
-        public HttpResponseMessage GetData(JObject jsonData)
-        {
-
-            var db = ServicesContext.Current;
-                       
-            dynamic json = jsonData;
-
-            //string typex = typeof(AdultWeir_Header).AssemblyQualifiedName;
-            //logger.Debug(typex);
-
-            string datasource = json.DataSource.ToObject<string>();
-
-            var dbset = db.GetDbSet(datasource);
-            
-            string result = "Failure";
-            
-            var data = dbset.SqlQuery("SELECT * from " + datasource);
-
-            result = JsonConvert.SerializeObject(data);    
-
-
-            HttpResponseMessage resp = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            resp.Content = new System.Net.Http.StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
-
-            return resp;
-        }
-         * */
-
 
         public DataTable GetHeadersDataForDataset(int id)
         {
@@ -168,15 +137,15 @@ namespace services.Controllers
 
             Project project = db.Projects.Find(json.ProjectId.ToObject<int>());
             if (project == null)
-                throw new Exception("Configuration error.  Please try again.");
+                throw new Exception("Configuration error.");
 
             User me = AuthorizationManager.getCurrentUser(); 
             if (me == null)
                 throw new Exception("Configuration error.");
 
-            //verify that the sender is the project owner.  TODO -- commented out for now.
-            //if (project.Owner.Id != me.Id)
-            //    throw new Exception("Authorization error. You can only change editors for projects you own.");
+            //verify that the sender is the project owner. 
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
 
             //First -- remove all editors from this project.
             project.Editors.RemoveAll(o => o.Id > 0);
@@ -210,7 +179,11 @@ namespace services.Controllers
             if (dataset == null)
                 throw new Exception("Configuration error.");
 
+            Project project = db.Projects.Find(dataset.ProjectId);
+            
             User me = AuthorizationManager.getCurrentUser();
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Configuration error.");
 
             //Now save metadata
             List<MetadataValue> metadata = new List<MetadataValue>();
@@ -246,7 +219,9 @@ namespace services.Controllers
             if (project == null)
                 throw new Exception("Configuration error.  Please try again.");
 
-            //TODO: verify if project owner / editor ---------------------------
+            User me = AuthorizationManager.getCurrentUser();
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Configuration error.");
 
             var Activities = new List<string>();
 
@@ -434,7 +409,12 @@ namespace services.Controllers
             if (dataset == null)
                 throw new Exception("Configuration Error.");
 
-            //TODO: verify if owner/editor
+            Project project = db.Projects.Find(dataset.ProjectId);
+            if (project == null)
+                throw new Exception("Configuration Error");
+
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
 
             //setup our generic data stuff
             var data_header_name = dataset.Datastore.TablePrefix + "_Header";
@@ -707,6 +687,10 @@ namespace services.Controllers
             if (dataset == null)
                 throw new Exception("Configuration Error.");
 
+            Project project = db.Projects.Find(dataset.ProjectId);
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
             //setup our generic data stuff
             var data_header_name = dataset.Datastore.TablePrefix + "_Header";
             var data_detail_name = dataset.Datastore.TablePrefix + "_Detail";
@@ -911,6 +895,8 @@ namespace services.Controllers
 
             var provider = new MultipartFormDataStreamProvider(root);
 
+            User me = AuthorizationManager.getCurrentUser();
+
             var db = ServicesContext.Current;
 
             var task = Request.Content.ReadAsMultipartAsync(provider).
@@ -926,6 +912,11 @@ namespace services.Controllers
                     //Look up our project
                     Int32 ProjectId = Convert.ToInt32(provider.FormData.Get("ProjectId"));
                     logger.Debug("And we think the projectid === " + ProjectId);
+
+                    Project project = db.Projects.Find(ProjectId);
+                    if (!project.isOwnerOrEditor(me))
+                        throw new Exception("Authorization error.");
+
 
                     var newFileName = "";
 
@@ -1072,13 +1063,8 @@ namespace services.Controllers
                     if (project == null)
                         throw new Exception("Project ID not found: " + ProjectId);
 
-                    //TODO: collaborators?
-                    //security check :: you can only edit your own projects
-//                    if (project.Owner.Id != me.Id)
-//                    {
-//                        throw new Exception("NotAuthorized: You can only edit projects you own.");
-//                    }
-//editors too.  -- look them up  TODO
+                    if (!project.isOwnerOrEditor(me))
+                        throw new Exception("Authorization error.");
 
                     //Now iterate through the files that just came in
                     List<services.Models.File> files = new List<services.Models.File>();
@@ -1209,6 +1195,10 @@ namespace services.Controllers
                 Project project = db.Projects.Find(in_project.Id);
                 if (project == null)
                     throw new Exception("Configuration error.");
+
+                //ok if they are editing the project, they can only edit projects they own or are editors
+                if (!project.isOwnerOrEditor(me))
+                    throw new Exception("Authorization error.");
 
                 //map our properties.
                 project.Description = in_project.Description;
