@@ -21,6 +21,7 @@ namespace services.Controllers
     public class AccountController : ApiController
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        public const String LOCAL_USER_AUTH = "LOCAL_AUTH";
         
         [HttpGet]
         public AccountResult Logout()
@@ -46,13 +47,13 @@ namespace services.Controllers
 
             if (ModelState.IsValid)
             {
-                if (Membership.ValidateUser(model.Username, model.Password))
+                var user = db.User.SingleOrDefault(x => x.Username == model.Username);
+
+                if (Membership.ValidateUser(model.Username, model.Password) || isValidLocalUser(user, model.Password))
                 {
                     FormsAuthentication.SetAuthCookie(model.Username, true);
                     logger.Debug("User authenticated : " + model.Username);
                     logger.Debug("--> " + System.Web.HttpContext.Current.Request.LogonUserIdentity.Name);
-
-                    var user = db.User.SingleOrDefault(x => x.Username == model.Username);
 
                     if (user == null) //If user doesn't exist in our system, create it.
                     {
@@ -100,6 +101,24 @@ namespace services.Controllers
             return result;
         }
 
+        private bool isValidLocalUser(Models.User user, string password)
+        {
+            if (user == null)
+            {
+                logger.Debug("User not found");
+                return false;
+            }
+
+            var salt = System.Configuration.ConfigurationManager.AppSettings["PasswordSalt"]; //in web.config
+            logger.Debug("salt: " + salt);
+
+            UserPreference local_auth = user.UserPreferences.Where(o => o.Name == LOCAL_USER_AUTH).SingleOrDefault();
+            if (local_auth != null && MD5Util.VerifyMd5Hash(password + salt, local_auth.Value))
+                return true;
+
+            return false;
+
+        }
 
     }
 }
