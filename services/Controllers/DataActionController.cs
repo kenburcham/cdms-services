@@ -89,9 +89,30 @@ namespace services.Controllers
                 logger.Debug(e);
             }
 
-            var datasets = db.Datasets.SqlQuery("SELECT * FROM Datasets WHERE Id in (" + mydatasets +")");
+            var datasets = db.Datasets.SqlQuery("SELECT * FROM Datasets WHERE Id in (" + mydatasets +") ORDER BY Name");
 
             return datasets;
+        }
+
+        [HttpGet]
+        public IEnumerable<Project> GetMyProjects()
+        {
+            var db = ServicesContext.Current;
+            User me = AuthorizationManager.getCurrentUser();
+            var my_projects = "";
+            try
+            {
+                my_projects = me.UserPreferences.Where(o => o.Name == UserPreference.PROJECTS).FirstOrDefault().Value;
+            }
+            catch (Exception e)
+            {
+                logger.Debug("Couldn't get your projects -- probably don't have any favorites.");
+                logger.Debug(e);
+            }
+
+            var myprojects = db.Projects.SqlQuery("SELECT * FROM Projects WHERE Id in (" + my_projects + ") ORDER BY Name");
+
+            return myprojects;
         }
 
         [HttpPost]
