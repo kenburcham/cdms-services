@@ -110,7 +110,6 @@ namespace services.Controllers
             }
 
             var salt = System.Configuration.ConfigurationManager.AppSettings["PasswordSalt"]; //in web.config
-            logger.Debug("salt: " + salt);
 
             UserPreference local_auth = user.UserPreferences.Where(o => o.Name == LOCAL_USER_AUTH).SingleOrDefault();
             if (local_auth != null && MD5Util.VerifyMd5Hash(password + salt, local_auth.Value))

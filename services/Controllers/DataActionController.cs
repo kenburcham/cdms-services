@@ -861,10 +861,13 @@ namespace services.Controllers
             importResult.duplicates = duplicateActivities;
             importResult.success = true;
             */
-            string result = JsonConvert.SerializeObject(new_records);
+           
             
-            HttpResponseMessage resp = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            resp.Content = new System.Net.Http.StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
+            
+            //string result = JsonConvert.SerializeObject(new_records);
+            
+            //HttpResponseMessage resp = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            //resp.Content = new System.Net.Http.StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
 
             //return resp;
             
@@ -1262,7 +1265,8 @@ namespace services.Controllers
                     switch (ControlType)
                     {
                         case "number":
-                            logger.Debug("A number");
+                        case "currency":
+                            logger.Debug("A number or currency");
                             conditions.Add(field.DbColumnName + item.Value); //>100
                             break;
 
@@ -1303,6 +1307,7 @@ namespace services.Controllers
                             conditions.Add(field.DbColumnName + " in('" + string.Join("','", select_val) + "')");
                             break;
                         case "date":
+                        case "datetime":
                             logger.Debug("A date!: ");
                             if (item.Value.ParamFieldDateType == "between") //otherwise, do nothing with this criteria
                             {
@@ -1340,6 +1345,21 @@ namespace services.Controllers
             {
                 conditions.Add("ActivityQAStatusId=" + json.QAStatusId);
             }
+
+            //ROWQASTATUS
+            if (json.RowQAStatusId != null && json.RowQAStatusId != "[\"all\"]")
+            {
+                logger.Debug(json.RowQAStatusId);
+                var rowqas = new List<string>();
+                var rowqas_in = JArray.Parse(json.RowQAStatusId.ToObject<string>());
+                foreach (var item in rowqas_in)
+                {
+                    rowqas.Add(item.ToObject<string>());
+                }
+                conditions.Add("QAStatusId IN (" + string.Join(",", rowqas.ToArray()) + ")");
+            }
+
+
             /*
 
             var all_details = from d in db.AdultWeir_Detail
