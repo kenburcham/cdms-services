@@ -47,7 +47,7 @@ namespace services.Controllers
             */
             //return results.AsEnumerable();
 
-            return db.Projects.AsEnumerable();
+            return db.Projects.OrderBy(o => o.Name).AsEnumerable();
         }
 
         // GET api/Projects/5
