@@ -375,7 +375,7 @@ namespace services.Controllers
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(the_file)); //will create if necessary.
 
             string rootUrl = Request.RequestUri.AbsoluteUri.Replace(Request.RequestUri.AbsolutePath, String.Empty);
-            rootUrl += "/servicesSTAGE/exports/" + dataset.Id + "_" + me.Id + "/" + Filename;
+            rootUrl += "/services/exports/" + dataset.Id + "_" + me.Id + "/" + Filename;
 
             using (TextWriter writer = System.IO.File.CreateText(the_file)) //will overwrite = good
             {
@@ -1126,7 +1126,7 @@ namespace services.Controllers
                                 logger.Debug("Desc = " + newFile.Description);
 
                                 newFile.Name = info.Name;//.Headers.ContentDisposition.FileName;
-                                newFile.Link = rootUrl + "/servicesSTAGE/uploads/" + ProjectId + "/" + info.Name; //file.LocalFileName;
+                                newFile.Link = rootUrl + "/services/uploads/" + ProjectId + "/" + info.Name; //file.LocalFileName;
                                 newFile.Size = (info.Length / 1024).ToString(); //file.Headers.ContentLength.ToString();
                                 newFile.FileTypeId = FileType.getFileTypeFromFilename(info);
                                 newFile.UserId = me.Id;
