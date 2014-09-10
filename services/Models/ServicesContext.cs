@@ -67,6 +67,8 @@ namespace services.Models
         public DbSet<Appraisal_Detail> Appraisal_Detail { get; set; }
         public DbSet<Appraisal_Header> Appraisal_Header { get; set; }
 
+        public DbSet<ArtificialProduction_Header> ArtificialProduction_Header { get; set; }
+        public DbSet<ArtificialProduction_Detail> ArtificialProduction_Detail { get; set; }
 
         //get the dbset by name rather than by type
         public DbSet GetDbSet(string entityName)
