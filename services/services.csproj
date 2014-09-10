@@ -430,6 +430,10 @@
     <Compile Include="Migrations\201407291900317_appraisal-project-type.Designer.cs">
       <DependentUpon>201407291900317_appraisal-project-type.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201409091952405_artificial-production.cs" />
+    <Compile Include="Migrations\201409091952405_artificial-production.Designer.cs">
+      <DependentUpon>201409091952405_artificial-production.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
@@ -462,6 +466,9 @@
     <Compile Include="Models\Data\Appraisal.cs" />
     <Compile Include="Models\Data\Appraisal_Detail.cs" />
     <Compile Include="Models\Data\Appraisal_Header.cs" />
+    <Compile Include="Models\Data\ArtificialProduction.cs" />
+    <Compile Include="Models\Data\ArtificialProduction_Detail.cs" />
+    <Compile Include="Models\Data\ArtificialProduction_Header.cs" />
     <Compile Include="Models\Data\DataDetail.cs" />
     <Compile Include="Models\Data\DataHeader.cs" />
     <Compile Include="Models\Data\DatasetData.cs" />
@@ -568,6 +575,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\PublishProfiles\cdms-local.pubxml" />
     <None Include="Properties\PublishProfiles\data.ctuir.org-services-STAGE.pubxml" />
     <None Include="Properties\PublishProfiles\data.ctuir.org-services.pubxml" />
     <Content Include="Views\Account\Login.cshtml" />
@@ -808,6 +816,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201407291900317_appraisal-project-type.resx">
       <DependentUpon>201407291900317_appraisal-project-type.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201409091952405_artificial-production.resx">
+      <DependentUpon>201409091952405_artificial-production.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
