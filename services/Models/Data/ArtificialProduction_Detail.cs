@@ -19,5 +19,6 @@ namespace services.Models.Data
         public int? NumberEggsTaken { get; set; }
         public string ReleaseSite { get; set; }
         public string FishComments { get; set; }
+        public string ProgramGroup { get; set; }
     }
 }
