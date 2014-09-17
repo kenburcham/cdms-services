@@ -693,8 +693,257 @@ namespace services.Controllers
             return first;
         }
 
-        [HttpPost]
         public HttpResponseMessage SaveDatasetActivities(JObject jsonData)
+        {
+            return SaveDatasetActivitiesSQL(jsonData);
+        }
+
+        //so we'll build one that generates sql directly since the EFF way has mediocre performance.
+        [HttpPost]
+        private HttpResponseMessage SaveDatasetActivitiesSQL(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            User me = AuthorizationManager.getCurrentUser();
+
+            dynamic json = jsonData;
+
+            Dataset dataset = db.Datasets.Find(json.DatasetId.ToObject<int>());
+            
+            if (dataset == null)
+                throw new Exception("Configuration Error.");
+
+            Project project = db.Projects.Find(dataset.ProjectId);
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
+            var data_header_name = dataset.Datastore.TablePrefix + "_Header";
+            var data_detail_name = dataset.Datastore.TablePrefix + "_Detail";
+
+            //these will get loaded once and then stay the same every time.
+            var query_header = "INSERT INTO " + data_header_name + " (";
+            var query_detail = "INSERT INTO " + data_detail_name + " (";
+            var headerFields = new List<string>();
+            var detailFields = new List<string>();
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+                foreach (var item in json.activities)
+                {
+                    int newActivityId = 0;
+                   
+                        if (item is JProperty)
+                        {
+
+                            var prop = item as JProperty;
+                            dynamic activity_json = prop.Value;
+
+                            Activity activity = new Activity();
+                            activity.LocationId = activity_json.LocationId;
+
+                            try
+                            {
+                                activity.ActivityDate = activity_json.ActivityDate;
+                            }
+                            catch (Exception e)
+                            {
+                                //TODO -- this is a very bad idea if the date is wrong...
+                                logger.Debug("Ooops had an error converting date: " + activity_json.ActivityDate);
+                                logger.Debug(e.ToString());
+
+                                throw e;
+
+                            }
+
+                            activity.DatasetId = json.DatasetId;
+                            activity.UserId = me.Id;
+                            activity.SourceId = 1;                                                                  // TODO 
+                            activity.ActivityTypeId = 1;
+                            activity.CreateDate = DateTime.Now;
+                            activity.InstrumentId = activity_json.InstrumentId;
+                            activity.AccuracyCheckId = activity_json.AccuracyCheckId;
+                            activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
+                            activity.Timezone = activity_json.Timezone;
+
+                            db.Activities.Add(activity);
+                            db.SaveChanges();
+
+                            dynamic activityqastatus = activity_json.ActivityQAStatus;
+
+                            newActivityId = activity.Id;
+
+                            ActivityQA newQA = new ActivityQA();
+                            newQA.ActivityId = activity.Id;
+                            newQA.QAStatusId = activityqastatus.QAStatusID.ToObject<int>();
+                            newQA.Comments = activityqastatus.Comments;
+                            newQA.EffDt = DateTime.Now;
+                            newQA.UserId = activity.UserId;
+
+                            db.ActivityQAs.Add(newQA);
+                            db.SaveChanges();
+
+                            //get these ready for a new set of values
+                            var query_header_values = " VALUES (";
+                            var query_detail_values = " VALUES (";
+                            var headerValues = new List<string>();
+                            var detailValues = new List<string>();
+
+                            //have our headers been populated yet?  we only have to do it once.
+                            if (headerFields.Count == 0)
+                            {
+                                //first the ones we always have
+                                headerFields.Add("ActivityId");
+                                headerFields.Add("ByUserId");
+                                headerFields.Add("EffDt");
+
+                                //now spin through and add any incoming ones from our JSON.
+                                var the_header = activity_json.Header as JObject;
+                                IList<string> propertyNames = the_header.Properties().Select(p => p.Name).ToList();
+                                foreach (var prop_field in propertyNames)
+                                {
+                                    headerFields.Add(prop_field);
+                                }
+                            }
+
+                            headerValues.Add(activity.Id.ToString());
+                            headerValues.Add(activity.UserId.ToString());
+                            headerValues.Add("'" + DateTime.Now.ToString() + "'");
+
+                            //now populate header values 
+                            foreach (var prop_field in headerFields)
+                            {
+                                if (prop_field != "ActivityId" && prop_field != "ByUserId" && prop_field != "EffDt") //these are already done.
+                                {
+                                    var control_type = dataset.Fields.Where(o => o.Field.DbColumnName == prop_field).Single().ControlType;
+                                    var objVal = activity_json.Header.GetValue(prop_field);
+                                    if (objVal == null)
+                                        headerValues.Add("null");
+                                    else
+                                    {
+                                        headerValues.Add(getStringValueByControlType(control_type, objVal.ToString()));
+                                    }
+                                }
+                            }
+
+                            var the_query = query_header + string.Join(",", headerFields) + ") " + query_header_values + string.Join(",", headerValues) + ")";
+                            logger.Debug(the_query);
+                            using (SqlCommand cmd = new SqlCommand(the_query, con))
+                            {
+                                if(cmd.ExecuteNonQuery() == 0)
+                                {
+                                    logger.Debug("Failed to execute query: " + the_query);
+                                    throw new Exception("Failed to execute header query.  See log.");
+                                }
+                            }
+
+                            //---------------- now for the details...
+                            int rowid = 1;
+                            foreach (JObject detail in activity_json.Details)
+                            {
+                                //have our detail fields been populated yet?  we only have to do it once.
+                                if (detailFields.Count == 0)
+                                {
+                                    //first the ones we always have
+                                    detailFields.Add("ActivityId");
+                                    detailFields.Add("ByUserId");
+                                    detailFields.Add("EffDt");
+                                    detailFields.Add("RowStatusId");
+                                    detailFields.Add("RowId");
+                                    detailFields.Add("QAStatusId");
+
+                                    //now spin through and add any incoming ones from our JSON.
+                                    IList<string> propertyNames = detail.Properties().Select(p => p.Name).ToList();
+                                    foreach (var prop_field in propertyNames)
+                                    {
+                                        DatasetField the_field = dataset.Fields.Where(o => o.Field.DbColumnName == prop_field && o.FieldRoleId == 2).SingleOrDefault();
+                                        if (the_field != null)
+                                            detailFields.Add(prop_field);
+                                    }
+                                }
+
+                                detailValues.Add(activity.Id.ToString());
+                                detailValues.Add(activity.UserId.ToString());
+                                detailValues.Add("'" + DateTime.Now.ToString() + "'");
+                                detailValues.Add(DataDetail.ROWSTATUS_ACTIVE.ToString());
+                                detailValues.Add(rowid.ToString());
+                                detailValues.Add(detail.GetValue("QAStatusId").ToString());
+
+                                //now populate detail values 
+                                foreach (var prop_field in detailFields)
+                                {
+                                    if (prop_field != "QAStatusId" && prop_field != "ActivityId" && prop_field != "ByUserId" && prop_field != "EffDt" && prop_field != "RowId" && prop_field != "RowStatusId") //these are already done.
+                                    {
+                                        var control_type = dataset.Fields.Where(o => o.Field.DbColumnName == prop_field).SingleOrDefault().ControlType;
+                                        var objVal = detail.GetValue(prop_field);
+                                        if (objVal == null)
+                                            detailValues.Add("null");
+                                        else
+                                        {
+                                            detailValues.Add(getStringValueByControlType(control_type, objVal.ToString()));
+                                           
+                                        }
+                                    }
+                                }
+                                rowid++;
+                                var the_detail_query = query_detail + string.Join(",", detailFields) + ") " + query_detail_values + string.Join(",", detailValues) + ")";
+                                //logger.Debug(the_detail_query);
+                                using (SqlCommand cmd = new SqlCommand(the_detail_query, con))
+                                {
+                                    if(cmd.ExecuteNonQuery() == 0)
+                                    {
+                                        logger.Debug("Problem executing: " + the_detail_query);
+                                        throw new Exception("Failed to execute detail query!");
+                                    }
+                                }
+                                detailValues = new List<string>();
+                            }//foreach detail
+
+                            //If there is a ReadingDateTime field in use, set the activity description to be the range of reading dates for this activity.
+                            if (newActivityId != 0 && dataset.Datastore.TablePrefix == "WaterTemp") // others with readingdatetime?
+                            {
+                                var query = "update Activities set Description = (select concat(convert(varchar,min(ReadingDateTime),111), ' - ', convert(varchar,max(ReadingDateTime),111)) from " + dataset.Datastore.TablePrefix + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
+
+                                using (SqlCommand cmd = new SqlCommand(query, con))
+                                {
+                                    logger.Debug(query);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+
+                        }//if is a jproperty
+                        
+
+                }//foreach activity
+            }//connection
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        private string getStringValueByControlType(string control_type, string in_val)
+        {
+            string retval = null;
+
+            switch (control_type)
+            {
+                case "text":
+                case "textarea":
+                case "multiselect":
+                case "select":
+                case "date":
+                case "datetime":
+                    retval = "'" + in_val.Replace("'", "''") + "'";
+                    break;
+                default:
+                    retval = in_val;
+                    break;
+            }
+
+            return retval;
+        }
+
+        [HttpPost]
+        private HttpResponseMessage SaveDatasetActivitiesEFF(JObject jsonData)
         {
             logger.Debug("Saving dataset activities: ");
             var db = ServicesContext.Current;
@@ -1297,8 +1546,8 @@ namespace services.Controllers
                             var conditional = " = ";
                             if (item.Value.ToString().Contains("%"))
                                 conditional = " LIKE ";
-
-                            conditions.Add(field.DbColumnName + conditional + "'" + item.Value + "'");
+                            var replaced_value = item.Value.ToString().Replace("'", "''");
+                            conditions.Add(field.DbColumnName + conditional + "'" + replaced_value + "'");
                             break;
 
                         case "multiselect":
@@ -1312,7 +1561,8 @@ namespace services.Controllers
                             List<string> ms_condition = new List<string>();
                             foreach (var ms_item in mselect_val)
                             {
-                                ms_condition.Add(field.DbColumnName + " LIKE '%\"" + ms_item + "\"%'");
+                                var replaced_ms_item = ms_item.ToString().Replace("'", "''");
+                                ms_condition.Add(field.DbColumnName + " LIKE '%\"" + replaced_ms_item + "\"%'");
                             }
 
                             conditions.Add("(" + string.Join(" OR ", ms_condition) + ")");

@@ -275,10 +275,12 @@ namespace services.Controllers
                 throw new Exception("Authorization error.");
 
             Location location = json.Location.ToObject<Location>();
+            location.UserId = me.Id;
 
             //IF the incoming location has an ID then we update, otherwise we create a new project location
             if (location.Id == 0)
             {
+                location.CreateDateTime = DateTime.Now;
                 project.Locations.Add(location);
                 db.SaveChanges();
                 logger.Debug("success adding NEW proejct location!");
@@ -464,7 +466,7 @@ namespace services.Controllers
             int FieldId = json.FieldId.ToObject<int>();
             var field = db.DatasetFields.Find(FieldId);
             if (field == null)
-                throw new Exception("Dataset could not be found: " + DatasetId);
+                throw new Exception("Field could not be retrieved for dataset: " + DatasetId);
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
