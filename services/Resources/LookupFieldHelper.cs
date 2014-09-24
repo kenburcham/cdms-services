@@ -17,6 +17,9 @@ namespace services.Resources
         //  this is intended for use in dynamically returning lookup or multilookup controltype fields.
         public static string getPossibleValues(string raw_query)
         {
+            if (raw_query == null)
+                return null;
+
             string pv_value = raw_query.ToUpper();
             string query = pv_value.Replace("DROP", "").Replace("DELETE", "");
 
