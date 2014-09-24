@@ -438,6 +438,10 @@
     <Compile Include="Migrations\201409111550003_add-program-group-artificial-production.Designer.cs">
       <DependentUpon>201409111550003_add-program-group-artificial-production.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201409241528129_creel-dataset.cs" />
+    <Compile Include="Migrations\201409241528129_creel-dataset.Designer.cs">
+      <DependentUpon>201409241528129_creel-dataset.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.Designer.cs">
@@ -473,12 +477,17 @@
     <Compile Include="Models\Data\ArtificialProduction.cs" />
     <Compile Include="Models\Data\ArtificialProduction_Detail.cs" />
     <Compile Include="Models\Data\ArtificialProduction_Header.cs" />
+    <Compile Include="Models\Data\CreelSurvey.cs" />
+    <Compile Include="Models\Data\CreelSurvey_Carcass.cs" />
+    <Compile Include="Models\Data\CreelSurvey_Detail.cs" />
+    <Compile Include="Models\Data\CreelSurvey_Header.cs" />
     <Compile Include="Models\Data\DataDetail.cs" />
     <Compile Include="Models\Data\DataHeader.cs" />
     <Compile Include="Models\Data\DatasetData.cs" />
     <Compile Include="Models\Data\FishTransport.cs" />
     <Compile Include="Models\Data\FishTransport_Detail.cs" />
     <Compile Include="Models\Data\FishTransport_Header.cs" />
+    <Compile Include="Models\Data\DataDetailRelation.cs" />
     <Compile Include="Models\Data\WaterTemp.cs" />
     <Compile Include="Models\Data\WaterTemp_Detail.cs" />
     <Compile Include="Models\Data\WaterTemp_Header.cs" />
@@ -546,6 +555,7 @@
     <Compile Include="Models\UserPreference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AuthorizationManager.cs" />
+    <Compile Include="Resources\LookupFieldHelper.cs" />
     <Compile Include="Resources\MD5Util.cs" />
     <Compile Include="Resources\TSVReader.cs" />
     <Compile Include="Resources\CSVReader.cs" />
@@ -825,6 +835,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201409111550003_add-program-group-artificial-production.resx">
       <DependentUpon>201409111550003_add-program-group-artificial-production.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201409241528129_creel-dataset.resx">
+      <DependentUpon>201409241528129_creel-dataset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

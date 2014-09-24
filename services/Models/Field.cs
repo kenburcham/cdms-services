@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using services.Resources;
 
 namespace services.Models
 {
     public class Field
     {
+        private string _possibleValues;
+
         public int Id { get; set; }
         public int FieldCategoryId { get; set; }
         public string TechnicalName { get; set; }
@@ -14,7 +17,23 @@ namespace services.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string Units { get; set; }
-        public string PossibleValues { get; set; }
+        public string PossibleValues
+        {
+            get
+            {
+                if (this.ControlType == "lookup" || this.ControlType == "multilookup")
+                {
+                    return LookupFieldHelper.getPossibleValues(_possibleValues);
+                }
+                else
+                    return _possibleValues;
+            }
+
+            set
+            {
+                _possibleValues = value;
+            }
+        }
         public string Validation { get; set; }
         public string Rule { get; set; }
         public string DataType { get; set; }

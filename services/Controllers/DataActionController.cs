@@ -695,7 +695,7 @@ namespace services.Controllers
 
         public HttpResponseMessage SaveDatasetActivities(JObject jsonData)
         {
-            return SaveDatasetActivitiesSQL(jsonData);
+            return SaveDatasetActivitiesEFF(jsonData);
         }
 
         //so we'll build one that generates sql directly since the EFF way has mediocre performance.
@@ -728,10 +728,14 @@ namespace services.Controllers
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
                 con.Open();
+
                 foreach (var item in json.activities)
                 {
                     int newActivityId = 0;
-                   
+
+                    //each activity in its own scope...
+                    
+                        var trans = con.BeginTransaction();
                         if (item is JProperty)
                         {
 
@@ -763,24 +767,68 @@ namespace services.Controllers
                             activity.InstrumentId = activity_json.InstrumentId;
                             activity.AccuracyCheckId = activity_json.AccuracyCheckId;
                             activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
-                            activity.Timezone = activity_json.Timezone;
+                            activity.Timezone = (activity_json.Timezone != null) ? activity_json.Timezone.Replace("'","''") : "";
+                            
+                            var activity_query = "INSERT INTO Activities (LocationId, ActivityDate, DatasetId, UserId, SourceId, ActivityTypeId, CreateDate, Timezone) VALUES (";
+                            activity_query +=
+                                activity.LocationId + ",'" + 
+                                activity.ActivityDate + "'," +
+                                activity.DatasetId + "," +
+                                activity.UserId + "," +
+                                activity.SourceId + "," +
+                                activity.ActivityTypeId + "," +
+                                "'" + activity.CreateDate + "'," +
+                                //activity.InstrumentId + "," +
+                                //activity.AccuracyCheckId + "," +
+                                //activity.PostAccuracyCheckId + "," +
+                                "'" + activity.Timezone + "');";
+                            activity_query += "SELECT SCOPE_IDENTITY();";
 
-                            db.Activities.Add(activity);
-                            db.SaveChanges();
+                            logger.Debug(activity_query);
+
+                            using (SqlCommand cmd = new SqlCommand(activity_query, con,trans))
+                            {
+                                var result = cmd.ExecuteScalar();
+                                //logger.Debug(result + result.GetType().ToString()); = System.Decimal?!
+                                newActivityId = Convert.ToInt32(result.ToString());
+                            }
+
+                            //db.Activities.Add(activity);
+                            //db.SaveChanges();
 
                             dynamic activityqastatus = activity_json.ActivityQAStatus;
 
-                            newActivityId = activity.Id;
+                            activity.Id = newActivityId;
+                            logger.Debug("Hey!  we have a new activity id the ol' fashioned way: " + activity.Id);
+                    
+                            var newQA_query = "INSERT INTO ActivityQAs (ActivityId, QAStatusId, Comments, EffDt, UserId) VALUES (";
 
                             ActivityQA newQA = new ActivityQA();
-                            newQA.ActivityId = activity.Id;
+                            newQA.ActivityId = newActivityId;
                             newQA.QAStatusId = activityqastatus.QAStatusID.ToObject<int>();
-                            newQA.Comments = activityqastatus.Comments;
+                            newQA.Comments = activityqastatus.Comments.Replace("'","''");
                             newQA.EffDt = DateTime.Now;
                             newQA.UserId = activity.UserId;
 
-                            db.ActivityQAs.Add(newQA);
-                            db.SaveChanges();
+                            newQA_query += newQA.ActivityId + "," +
+                                newQA.QAStatusId + "," +
+                                "'" + newQA.Comments + "','" +
+                                newQA.EffDt  + "'," +
+                                newQA.UserId + ");";
+
+                            logger.Debug(newQA_query);
+
+                            using (SqlCommand cmd = new SqlCommand(newQA_query, con, trans))
+                            {
+                                if (cmd.ExecuteNonQuery() == 0)
+                                {
+                                    logger.Debug("Failed to execute query: " + newQA_query);
+                                    throw new Exception("Failed to execute qa query.  See log.");
+                                }
+                            }
+
+                            //db.ActivityQAs.Add(newQA);
+                            //db.SaveChanges();
 
                             //get these ready for a new set of values
                             var query_header_values = " VALUES (";
@@ -827,9 +875,9 @@ namespace services.Controllers
 
                             var the_query = query_header + string.Join(",", headerFields) + ") " + query_header_values + string.Join(",", headerValues) + ")";
                             logger.Debug(the_query);
-                            using (SqlCommand cmd = new SqlCommand(the_query, con))
+                            using (SqlCommand cmd = new SqlCommand(the_query, con, trans))
                             {
-                                if(cmd.ExecuteNonQuery() == 0)
+                                if (cmd.ExecuteNonQuery() == 0)
                                 {
                                     logger.Debug("Failed to execute query: " + the_query);
                                     throw new Exception("Failed to execute header query.  See log.");
@@ -880,16 +928,16 @@ namespace services.Controllers
                                         else
                                         {
                                             detailValues.Add(getStringValueByControlType(control_type, objVal.ToString()));
-                                           
+
                                         }
                                     }
                                 }
                                 rowid++;
                                 var the_detail_query = query_detail + string.Join(",", detailFields) + ") " + query_detail_values + string.Join(",", detailValues) + ")";
                                 //logger.Debug(the_detail_query);
-                                using (SqlCommand cmd = new SqlCommand(the_detail_query, con))
+                                using (SqlCommand cmd = new SqlCommand(the_detail_query, con, trans))
                                 {
-                                    if(cmd.ExecuteNonQuery() == 0)
+                                    if (cmd.ExecuteNonQuery() == 0)
                                     {
                                         logger.Debug("Problem executing: " + the_detail_query);
                                         throw new Exception("Failed to execute detail query!");
@@ -912,7 +960,8 @@ namespace services.Controllers
 
 
                         }//if is a jproperty
-                        
+
+                        trans.Commit();
 
                 }//foreach activity
             }//connection

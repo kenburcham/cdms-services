@@ -70,6 +70,10 @@ namespace services.Models
         public DbSet<ArtificialProduction_Header> ArtificialProduction_Header { get; set; }
         public DbSet<ArtificialProduction_Detail> ArtificialProduction_Detail { get; set; }
 
+        public DbSet<CreelSurvey_Header> CreelSurvey_Header { get; set; }
+        public DbSet<CreelSurvey_Detail> CreelSurvey_Detail { get; set; }
+        public DbSet<CreelSurvey_Carcass> CreelSurvey_Carcass { get; set; }
+
         //get the dbset by name rather than by type
         public DbSet GetDbSet(string entityName)
         {
