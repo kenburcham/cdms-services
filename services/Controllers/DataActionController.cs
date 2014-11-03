@@ -292,9 +292,53 @@ namespace services.Controllers
             return new HttpResponseMessage(HttpStatusCode.OK);
 
         }
+        
+        [HttpPost]
+        public DataTable GetRelationData(JObject jsonData)
+        {
+            //int FieldId, int ActivityId, int ParentRowId)
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+            int FieldId = json.FieldId.ToObject<int>();
 
+            Field f = db.Fields.Find(FieldId);
 
+            if (f == null || f.ControlType != "grid")
+            {
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            }
 
+            DataTable dt = new DataTable();
+
+            if (json["ActivityId"] is JToken && json["ParentRowId"] is JToken)
+            {
+
+                int DatasetId = Convert.ToInt32(f.DataSource);
+                Dataset dataset = db.Datasets.Find(DatasetId);
+
+                if (dataset == null)
+                    throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+
+                int ActivityId = json.ActivityId.ToObject<int>();
+                int ParentRowId = json.ParentRowId.ToObject<int>();
+
+                //dbcolumname for "grid" type fields 
+                string query = "SELECT h.* FROM "+dataset.Datastore.TablePrefix +"_" + f.DbColumnName + "_VW h WHERE h.ActivityId = " + ActivityId + " AND h.ParentRowId = " + ParentRowId;
+
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        con.Open();
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        da.Fill(dt);
+                    }
+                }
+            }
+
+            return dt;
+        }
+        
         //QUERY
         //QueryDatasetActivities -- can call with a datasetId or a datastoreId
         [HttpPost]
@@ -416,7 +460,11 @@ namespace services.Controllers
 
         }
 
-
+        /**
+         * Updates activities for a dataset.
+         * json with: DatasetId, ProjectId, activities
+         * 
+         */ 
         [HttpPost]
         public HttpResponseMessage UpdateDatasetActivities(JObject jsonData)
         {
@@ -444,6 +492,9 @@ namespace services.Controllers
             var dbset_detail = db.GetDbSet(data_detail_name);
             var dbset_header_type = db.GetTypeFor(data_header_name);
             var dbset_detail_type = db.GetTypeFor(data_detail_name);
+
+            //get a list of the fields that are GRID types (relations)
+            var grid_fields = dataset.Fields.Where(o => o.ControlType == "grid");
 
             foreach (var item in json.activities)
             {
@@ -1020,6 +1071,9 @@ namespace services.Controllers
 
             //var duplicateActivities = new List<Activity>();
 
+            //get a list of the fields that are GRID types (relations)
+            var grid_fields = dataset.Fields.Where( o => o.ControlType == "grid");
+
             var new_records = new List<Activity>();
 
             //wrap this in a transaction
@@ -1112,10 +1166,20 @@ namespace services.Controllers
 
                                 var header = activity_json.Header.ToObject(dbset_header_type);
                                 var details = new List<DataDetail>();
-
+                                Dictionary<string, JArray> grids = new Dictionary<string, JArray>();
+                                 
                                 foreach (var detailitem in activity_json.Details)
                                 {
+                                    //copy this json object into a EFF object // this is probably slow.
                                     details.Add(detailitem.ToObject(dbset_detail_type));
+                                    
+                                    //does this field have a relation/grid field?  If so then save those, too.
+                                    if (grid_fields != null)
+                                    {
+                                        foreach (var grid_field in grid_fields)
+                                            grids.Add(grid_field.DbColumnName, detailitem[grid_field.DbColumnName]);
+                                    }
+                                                  
                                 }
 
                                 //now do the saving!
@@ -1135,6 +1199,44 @@ namespace services.Controllers
                                     detail.EffDt = DateTime.Now;
 
                                     dbset_detail.Add(detail);
+
+                                    //relation grids?
+                                    if (grids.Count > 0)
+                                    {
+                                        foreach (KeyValuePair<string,JArray> grid_item in grids)
+                                        {
+                                            int grid_rowid = 1; //new grid field
+
+                                            var grid_type = dataset.Datastore.TablePrefix + "_" + grid_item.Key;
+                                            //logger.Debug(" Hey we have a relation of type: " + grid_type);
+
+                                            //get objecttype of this type
+                                            var dbset_grid_type = db.GetTypeFor(grid_type);
+                                            var dbset_relation = db.GetDbSet(grid_type);
+
+                                            //logger.Debug("saving items in : " + grid_item.Key );
+                                            
+                                            foreach (dynamic relation_row in grid_item.Value)
+                                            {
+                                                //logger.Debug("Relationrow: " + relation_row);
+                                                var relationObj = relation_row.ToObject(dbset_grid_type);
+
+                                                relationObj.EffDt = DateTime.Now;
+                                                relationObj.ParentRowId = rowid;
+                                                relationObj.RowId = grid_rowid;
+                                                relationObj.RowStatusId = DataDetail.ROWSTATUS_ACTIVE;
+                                                relationObj.ByUserId = activity.UserId;
+                                                relationObj.ActivityId = activity.Id;
+                                                relationObj.QAStatusId = dataset.DefaultRowQAStatusId; //TODO?
+
+                                                //logger.Debug("woot saving a grid row!");
+                                                //logger.Debug(JsonConvert.SerializeObject( relationObj, Formatting.Indented));
+                                                dbset_relation.Add(relationObj);
+                                                grid_rowid++;
+                                            }
+                                        }
+                                    }
+
                                     rowid++;
                                 }
 
@@ -1194,8 +1296,8 @@ namespace services.Controllers
         }
 
 
-
-        /**
+         
+       /**
        * Handle uploaded files
        * IEnumerable<File>
        */

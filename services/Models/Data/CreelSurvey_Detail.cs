@@ -30,8 +30,8 @@ namespace services.Models.Data
         public string UTMZone { get; set; }
 
         //this gets its own specific location -- built auto-magically from teh GPS-Easting/GPS-Northing (on the UI side)
-        public int? LocationId { get; set; }
-        public virtual Location Location { get; set; }
+        public int? DetailLocationId { get; set; }
+        public virtual Location DetailLocation { get; set; }
 
         public string WaterBody { get; set; } //this is a lookup, so we just store the matching label.
         public string SectionNumber { get; set; }
