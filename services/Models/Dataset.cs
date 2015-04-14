@@ -79,7 +79,7 @@ namespace services.Models
 
             //add on any "system" fields we want to also return
             var activity_fields = "ActivityDate,";
-            var system_fields = "CreateDate,QAStatusId,QAStatusName, ActivityQAComments, LocationId,ActivityQAStatusId,DatasetId,ActivityId";
+            var system_fields = "CreateDate,QAStatusId,QAStatusName, ActivityQAComments, LocationId,ActivityQAStatusId,DatasetId,ActivityId,RowId, RowStatusId";
 
             return activity_fields + header_fields + detail_fields + system_fields;
         }
@@ -94,7 +94,7 @@ namespace services.Models
                 labels = labels
                   .Concat(this.Fields.Where(o => o.FieldRoleId == FieldRole.HEADER).OrderBy(o => o.Label).Select(o => o.Label + " " + o.Field.Units))
                   .Concat(this.Fields.Where(o => o.FieldRoleId == FieldRole.DETAIL).OrderBy(o => o.Label).Select(o => o.Label + " " + o.Field.Units))
-                  .Concat(new List<string>(new string[] { "CreateDate", "QAStatusId", "QAStatus", "ActivityQAComments", "LocationId", "ActivityQAStatusId", "DatasetId", "ActivityId" }));
+                  .Concat(new List<string>(new string[] { "CreateDate", "QAStatusId", "QAStatus", "ActivityQAComments", "LocationId", "ActivityQAStatusId", "DatasetId", "ActivityId","RowId","RowStatusId"}));
 
                 foreach (var item in labels)
                 {
