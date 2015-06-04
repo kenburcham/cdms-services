@@ -1047,7 +1047,6 @@ namespace services.Controllers
         {
             logger.Debug("Saving dataset activities: ");
             var db = ServicesContext.Current;
-
             User me = AuthorizationManager.getCurrentUser();
 
             dynamic json = jsonData;
@@ -1072,225 +1071,202 @@ namespace services.Controllers
             //var duplicateActivities = new List<Activity>();
 
             //get a list of the fields that are GRID types (relations)
-            var grid_fields = dataset.Fields.Where( o => o.ControlType == "grid");
+            var grid_fields = dataset.Fields.Where(o => o.ControlType == "grid");
 
             var new_records = new List<Activity>();
 
-            //wrap this in a transaction
-            
-            
-                foreach (var item in json.activities)
+            db.Configuration.AutoDetectChangesEnabled = false;
+            db.Configuration.ValidateOnSaveEnabled = false;
+
+            foreach (var item in json.activities)
+            {
+                int newActivityId = 0;
+
+                if (!(item is JProperty))
                 {
-                    var scope = new TransactionScope(
-                    TransactionScopeOption.RequiresNew,
-                    new TransactionOptions()
+                    throw new Exception("There is a problem with your request. Format error.");
+                }
+
+                var prop = item as JProperty;
+                dynamic activity_json = prop.Value;
+
+                Activity activity = new Activity();
+                activity.LocationId = activity_json.LocationId;
+
+                try
+                {
+                    activity.ActivityDate = activity_json.ActivityDate;
+                }
+                catch (Exception e)
+                {
+                    logger.Debug("Ooops had an error converting activity date: " + activity_json.ActivityDate);
+                    logger.Debug(e.ToString());
+
+                    throw e;
+
+                }
+
+                try
+                {
+                    activity.DatasetId = json.DatasetId;
+                    activity.UserId = me.Id;
+                    activity.SourceId = 1;                                                                  // TODO 
+                    activity.ActivityTypeId = 1;
+                    activity.CreateDate = DateTime.Now;
+                    activity.InstrumentId = activity_json.InstrumentId;
+                    activity.AccuracyCheckId = activity_json.AccuracyCheckId;
+                    activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
+                    activity.Timezone = activity_json.Timezone;
+
+                    /*
+                    //check for duplicates.  If it is a duplicate, add it to our list and bail out.
+                    if (activity.isDuplicate())
                     {
-                        IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted
-                    });
+                        duplicateActivities.Add(activity);
+                    }
+                    */
 
-                    int newActivityId = 0 ;
+                    db.Activities.Add(activity);
+                    db.SaveChanges();
 
-                    using (scope)
+                    dynamic activityqastatus = activity_json.ActivityQAStatus;
+
+                    newActivityId = activity.Id;
+
+                    ActivityQA newQA = new ActivityQA();
+                    newQA.ActivityId = activity.Id;
+                    newQA.QAStatusId = activityqastatus.QAStatusID.ToObject<int>();
+                    newQA.Comments = activityqastatus.Comments;
+                    newQA.EffDt = DateTime.Now;
+                    newQA.UserId = activity.UserId;
+
+                    db.ActivityQAs.Add(newQA);
+                    db.SaveChanges();
+
+                    logger.Debug("Created a new activity: ");
+                    logger.Debug(" LocationID = " + activity_json.LocationId);
+                    logger.Debug(" ActivityDate = " + activity_json.ActivityDate);
+                    logger.Debug("  ID = " + activity.Id);
+
+                    var header = activity_json.Header.ToObject(dbset_header_type);
+                    var details = new List<DataDetail>();
+                    Dictionary<string, JArray> grids = new Dictionary<string, JArray>();
+
+                    foreach (var detailitem in activity_json.Details)
                     {
+                        //copy this json object into a EFF object // this is probably slow.
+                        details.Add(detailitem.ToObject(dbset_detail_type));
 
-                        if (item is JProperty)
+                        //does this field have a relation/grid field?  If so then save those, too.
+                        if (grid_fields != null)
                         {
-                            var prop = item as JProperty;
-                            dynamic activity_json = prop.Value;
+                            foreach (var grid_field in grid_fields)
+                                grids.Add(grid_field.DbColumnName, detailitem[grid_field.DbColumnName]);
+                        }
 
-                            Activity activity = new Activity();
-                            activity.LocationId = activity_json.LocationId;
-                            
-                            try
+                    }
+
+                    //now do the saving!
+                    header.ActivityId = activity.Id;
+                    header.ByUserId = activity.UserId;
+                    header.EffDt = DateTime.Now;
+                    dbset_header.Add(header);
+
+                    //details
+                    int rowid = 1;
+                    foreach (var detail in details)
+                    {
+                        detail.RowId = rowid;
+                        detail.RowStatusId = DataDetail.ROWSTATUS_ACTIVE;
+                        detail.ActivityId = activity.Id;
+                        detail.ByUserId = activity.UserId;
+                        detail.EffDt = DateTime.Now;
+
+                        dbset_detail.Add(detail);
+
+                        //logger.Debug("added a detail");
+
+                        //relation grids?
+                        if (grids.Count > 0)
+                        {
+                            logger.Debug("We have grids in our data to save...");
+                            foreach (KeyValuePair<string, JArray> grid_item in grids)
                             {
-                                activity.ActivityDate = activity_json.ActivityDate;
+                                int grid_rowid = 1; //new grid field
+
+                                var grid_type = dataset.Datastore.TablePrefix + "_" + grid_item.Key;
+                                logger.Debug(" Hey we have a relation of type: " + grid_type);
+
+                                //get objecttype of this type
+                                var dbset_grid_type = db.GetTypeFor(grid_type);
+                                var dbset_relation = db.GetDbSet(grid_type);
+
+                                //logger.Debug("saving items in : " + grid_item.Key );
+
+                                foreach (dynamic relation_row in grid_item.Value)
+                                {
+                                    //logger.Debug("Relationrow: " + relation_row);
+                                    var relationObj = relation_row.ToObject(dbset_grid_type);
+
+                                    relationObj.EffDt = DateTime.Now;
+                                    relationObj.ParentRowId = rowid;
+                                    relationObj.RowId = grid_rowid;
+                                    relationObj.RowStatusId = DataDetail.ROWSTATUS_ACTIVE;
+                                    relationObj.ByUserId = activity.UserId;
+                                    relationObj.ActivityId = activity.Id;
+                                    relationObj.QAStatusId = dataset.DefaultRowQAStatusId; //TODO?
+
+                                    //logger.Debug("woot saving a grid row!");
+                                    //logger.Debug(JsonConvert.SerializeObject( relationObj, Formatting.Indented));
+                                    dbset_relation.Add(relationObj);
+                                    grid_rowid++;
+                                }
                             }
-                            catch (Exception e)
-                            {
-                                //TODO -- this is a very bad idea if the date is wrong...
-                                logger.Debug("Ooops had an error converting date: " + activity_json.ActivityDate);
-                                logger.Debug(e.ToString());
+                        }
 
-                                throw e;
+                        rowid++;
+                    }
 
-                            }
+                    db.SaveChanges(); //save all details for this activity, then iterate to the next activity.
+                }
+                catch (Exception e)
+                {
+                    logger.Debug("An error occurred saving the activity or details: "+newActivityId, e.Message);
 
-                            try
-                            {
-
-                                activity.DatasetId = json.DatasetId;
-                                activity.UserId = me.Id;
-                                activity.SourceId = 1;                                                                  // TODO 
-                                activity.ActivityTypeId = 1;
-                                activity.CreateDate = DateTime.Now;
-                                activity.InstrumentId = activity_json.InstrumentId;
-                                activity.AccuracyCheckId = activity_json.AccuracyCheckId;
-                                activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
-                                activity.Timezone = activity_json.Timezone;
-
-                                logger.Debug("and we have finished parameters.");
-                                /*
-                                //check for duplicates.  If it is a duplicate, add it to our list and bail out.
-                                if (activity.isDuplicate())
-                                {
-                                    duplicateActivities.Add(activity);
-                                }
-                                */
-
-                                db.Activities.Add(activity);
-                                db.SaveChanges();
-
-                                dynamic activityqastatus = activity_json.ActivityQAStatus;
-
-                                //logger.Debug(activity_json.ActivityQAStatus);
-
-                                //logger.Debug(activityqastatus.QAStatusId.ToObject<int>());
-
-                                newActivityId = activity.Id;
-
-                                ActivityQA newQA = new ActivityQA();
-                                newQA.ActivityId = activity.Id;
-                                newQA.QAStatusId = activityqastatus.QAStatusID.ToObject<int>();
-                                newQA.Comments = activityqastatus.Comments;
-                                newQA.EffDt = DateTime.Now;
-                                newQA.UserId = activity.UserId;
-
-                                db.ActivityQAs.Add(newQA);
-                                db.SaveChanges();
-
-
-                                //                        logger.Debug("Created a new activity: ");
-                                //                        logger.Debug(" LocationID = " + activity_json.LocationId);
-                                //                        logger.Debug(" ActivityDate = " + activity_json.ActivityDate);
-                                //                        logger.Debug("  ID = " + activity.Id);
-
-                                var header = activity_json.Header.ToObject(dbset_header_type);
-                                var details = new List<DataDetail>();
-                                Dictionary<string, JArray> grids = new Dictionary<string, JArray>();
-                                 
-                                foreach (var detailitem in activity_json.Details)
-                                {
-                                    //copy this json object into a EFF object // this is probably slow.
-                                    details.Add(detailitem.ToObject(dbset_detail_type));
-                                    
-                                    //does this field have a relation/grid field?  If so then save those, too.
-                                    if (grid_fields != null)
-                                    {
-                                        foreach (var grid_field in grid_fields)
-                                            grids.Add(grid_field.DbColumnName, detailitem[grid_field.DbColumnName]);
-                                    }
-                                                  
-                                }
-
-                                //now do the saving!
-                                header.ActivityId = activity.Id;
-                                header.ByUserId = activity.UserId;
-                                header.EffDt = DateTime.Now;
-                                dbset_header.Add(header);
-
-                                //details
-                                int rowid = 1;
-                                foreach (var detail in details)
-                                {
-                                    detail.RowId = rowid;
-                                    detail.RowStatusId = DataDetail.ROWSTATUS_ACTIVE;
-                                    detail.ActivityId = activity.Id;
-                                    detail.ByUserId = activity.UserId;
-                                    detail.EffDt = DateTime.Now;
-
-                                    dbset_detail.Add(detail);
-
-                                    //relation grids?
-                                    if (grids.Count > 0)
-                                    {
-                                        foreach (KeyValuePair<string,JArray> grid_item in grids)
-                                        {
-                                            int grid_rowid = 1; //new grid field
-
-                                            var grid_type = dataset.Datastore.TablePrefix + "_" + grid_item.Key;
-                                            //logger.Debug(" Hey we have a relation of type: " + grid_type);
-
-                                            //get objecttype of this type
-                                            var dbset_grid_type = db.GetTypeFor(grid_type);
-                                            var dbset_relation = db.GetDbSet(grid_type);
-
-                                            //logger.Debug("saving items in : " + grid_item.Key );
-                                            
-                                            foreach (dynamic relation_row in grid_item.Value)
-                                            {
-                                                //logger.Debug("Relationrow: " + relation_row);
-                                                var relationObj = relation_row.ToObject(dbset_grid_type);
-
-                                                relationObj.EffDt = DateTime.Now;
-                                                relationObj.ParentRowId = rowid;
-                                                relationObj.RowId = grid_rowid;
-                                                relationObj.RowStatusId = DataDetail.ROWSTATUS_ACTIVE;
-                                                relationObj.ByUserId = activity.UserId;
-                                                relationObj.ActivityId = activity.Id;
-                                                relationObj.QAStatusId = dataset.DefaultRowQAStatusId; //TODO?
-
-                                                //logger.Debug("woot saving a grid row!");
-                                                //logger.Debug(JsonConvert.SerializeObject( relationObj, Formatting.Indented));
-                                                dbset_relation.Add(relationObj);
-                                                grid_rowid++;
-                                            }
-                                        }
-                                    }
-
-                                    rowid++;
-                                }
-
-                                db.SaveChanges();
-
-                                scope.Complete(); //complete the transaction since nothing blew up!
+                    db = ServicesContext.RestartCurrent;
+                    db.Configuration.AutoDetectChangesEnabled = true;
+                    db.Configuration.ValidateOnSaveEnabled = true;
                                 
-                                //logger.Debug(((JObject)JToken.FromObject(data)).ToString());
-                                new_records.Add(activity);
-                            }
-                            catch (Exception e)
-                            {
-                                logger.Debug("An error occurred: ", e.ToString());
-                                throw e; //rethrow so that it'll come back as an error in the client.
-                            }
+                    //ok, lets try to delete the activity that went bad.
+                    db.Activities.Remove(db.Activities.Find(newActivityId));
+                    db.SaveChanges();
 
-                        } //if
-                    } //using
+                    logger.Debug("ok so we auto-deleted the activity we created: " + newActivityId);
 
-                    //If there is a ReadingDateTime field in use, set the activity description to be the range of reading dates for this activity.
-                    if (newActivityId != 0 && dataset.Datastore.TablePrefix == "WaterTemp") // others with readingdatetime?
+                    throw e; //rethrow so that it'll come back as an error in the client.
+                }
+                finally{
+                    db.Configuration.AutoDetectChangesEnabled = true;
+                    db.Configuration.ValidateOnSaveEnabled = true;
+                }
+
+                //If there is a ReadingDateTime field in use, set the activity description to be the range of reading dates for this activity.
+                if (newActivityId != 0 && dataset.Datastore.TablePrefix == "WaterTemp") // others with readingdatetime?
+                {
+                    using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
                     {
-                        using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+                        con.Open();
+                        var query = "update Activities set Description = (select concat(convert(varchar,min(ReadingDateTime),111), ' - ', convert(varchar,max(ReadingDateTime),111)) from " + dataset.Datastore.TablePrefix + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
+
+                        using (SqlCommand cmd = new SqlCommand(query, con))
                         {
-                            con.Open();
-                            var query = "update Activities set Description = (select concat(convert(varchar,min(ReadingDateTime),111), ' - ', convert(varchar,max(ReadingDateTime),111)) from " + dataset.Datastore.TablePrefix + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
-
-                            using (SqlCommand cmd = new SqlCommand(query, con))
-                            {
-                                logger.Debug(query);
-                                cmd.ExecuteNonQuery();
-                            }
-
+                            logger.Debug(query);
+                            cmd.ExecuteNonQuery();
                         }
                     }
-                } //foreach
+                }//if
 
-
-            /*
-            logger.Debug(duplicateActivities);
-
-            var importResult = new ImportResult();
-            importResult.duplicates = duplicateActivities;
-            importResult.success = true;
-            */
-           
-            
-            
-            //string result = JsonConvert.SerializeObject(new_records);
-            
-            //HttpResponseMessage resp = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            //resp.Content = new System.Net.Http.StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
-
-            //return resp;
+            } //foreach activity
             
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
