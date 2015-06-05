@@ -71,6 +71,7 @@ namespace services.Controllers
         {
             var db = ServicesContext.Current;
             return db.Instruments.AsEnumerable();
+            //return db.Instruments.OrderBy(o => o.Name).ThenBy(o => o.SerialNumber).AsEnumerable();
         }
 
         [HttpGet]

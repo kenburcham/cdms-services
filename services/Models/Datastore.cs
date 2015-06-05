@@ -33,7 +33,7 @@ namespace services.Models
                     var db = ServicesContext.Current;
 
                     return db.Location.SqlQuery("select distinct ll.* from Locations ll join LocationProjects lp on lp.Location_Id = ll.Id join Projects p on p.Id = lp.Project_Id join Datasets d on d.ProjectId = p.Id where d.DatastoreId = " +
-                        this.Id + " and ll.LocationTypeId = "+LocationType.DATA_TYPE);
+                        this.Id + " and ll.LocationTypeId = "+LocationType.DATA_TYPE + " order by ll.Label");
 
                 }
             }

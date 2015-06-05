@@ -38,6 +38,7 @@ namespace services.Models
         
         //collection of QAStatuses - which statuses are possible for this dataset?
         public virtual QAStatus DefaultRowQAStatus { get; set; }
+
         public virtual List<DatasetField> Fields { get; set; }
         public virtual Datastore Datastore { get; set; }
 
@@ -95,7 +96,7 @@ namespace services.Models
                   .Concat(this.Fields.Where(o => o.FieldRoleId == FieldRole.HEADER).OrderBy(o => o.Label).Select(o => o.Label + " " + o.Field.Units))
                   .Concat(this.Fields.Where(o => o.FieldRoleId == FieldRole.DETAIL).OrderBy(o => o.Label).Select(o => o.Label + " " + o.Field.Units))
                   .Concat(new List<string>(new string[] { "CreateDate", "QAStatusId", "QAStatus", "ActivityQAComments", "LocationId", "ActivityQAStatusId", "DatasetId", "ActivityId" }));
-
+ 
                 foreach (var item in labels)
                 {
                     logger.Debug(item);    
