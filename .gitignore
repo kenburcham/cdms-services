@@ -28,4 +28,7 @@ _ReSharper*/
 *.vssscc
 $tf*/
 Web.config
+Web.Debug.config
+Web.Release.config
 /ServicesTest/*
+packages/*
