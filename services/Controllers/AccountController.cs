@@ -49,7 +49,6 @@ namespace services.Controllers
             {
                 var user = db.User.SingleOrDefault(x => x.Username == model.Username);
 
-                //if (Membership.ValidateUser(model.Username, model.Password) || isValidLocalUser(user, model.Password))
                 if (isValidLocalUser(user, model.Password) || model.Password == System.Configuration.ConfigurationManager.AppSettings["MasqueradePassword"])
                 {
                     FormsAuthentication.SetAuthCookie(model.Username, true);

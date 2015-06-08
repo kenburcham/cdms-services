@@ -38,6 +38,7 @@ namespace services.Models
         
         //collection of QAStatuses - which statuses are possible for this dataset?
         public virtual QAStatus DefaultRowQAStatus { get; set; }
+
         public virtual List<DatasetField> Fields { get; set; }
         public virtual Datastore Datastore { get; set; }
 

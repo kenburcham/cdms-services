@@ -15,6 +15,8 @@ namespace services.Models
 
         private const int SUPERUSER_KEN = 1;
         private const int SUPERUSER_COLETTE = 2;
+        private const int SUPERUSER_GEORGE = 3;
+        private const int SUPERUSER_STACY = 4;
 
         public int Id { get; set; }
         
@@ -52,7 +54,7 @@ namespace services.Models
             }
 
             //superusers
-            if (user.Id == SUPERUSER_KEN || user.Id == SUPERUSER_COLETTE)
+            if (user.Id == SUPERUSER_KEN || user.Id == SUPERUSER_COLETTE || user.Id == SUPERUSER_GEORGE || user.Id == SUPERUSER_STACY)
                 return true;
 
 
