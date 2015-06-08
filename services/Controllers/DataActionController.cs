@@ -1046,7 +1046,7 @@ namespace services.Controllers
         private HttpResponseMessage SaveDatasetActivitiesEFF(JObject jsonData)
         {
             logger.Debug("Saving dataset activities: ");
-            var db = ServicesContext.Current;
+            var db = ServicesContext.RestartCurrent;
             User me = AuthorizationManager.getCurrentUser();
 
             dynamic json = jsonData;
