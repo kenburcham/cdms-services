@@ -645,6 +645,7 @@ namespace services.Controllers
 
                     //now lets iterate our incoming rows and see what we've got.
                     var details = new List<DataDetail>();
+                    Dictionary<string, JArray> grids = new Dictionary<string, JArray>();
 
                     List<int> updated_rows = new List<int>();
                     foreach (var updated_row in json.updatedRowIds)
@@ -666,6 +667,16 @@ namespace services.Controllers
                     foreach (var detailitem in activity_json.Details)
                     {
                         var adw = detailitem.ToObject(dbset_detail_type);
+
+                        //does this field have a relation/grid field?  If so then save those, too.
+                        if (grid_fields != null)
+                        {
+                            foreach (var grid_field in grid_fields)
+                            {
+                                logger.Debug("Found a grid field: " + grid_field.DbColumnName);
+                                grids.Add(grid_field.DbColumnName, detailitem[grid_field.DbColumnName]);
+                            }
+                        }
 
                         logger.Debug("spinning through incoming details: " + adw.Id);
 
@@ -696,17 +707,67 @@ namespace services.Controllers
 
                     }
 
-
+                    //logger.Debug(JsonConvert.SerializeObject(grids, Formatting.Indented));
+                    //logger.Debug(JsonConvert.SerializeObject(details, Formatting.Indented));
 
                     foreach (var detail in details)
                     {
                         detail.ActivityId = activity.Id;
                         detail.ByUserId = activity.UserId;
                         detail.EffDt = DateTime.Now;
-                        
-                        //TODO: activity QA ID + comment
-
+                       
                         dbset_detail.Add(detail);
+
+                        //any relation grids?
+                        if (grids.Count > 0)
+                        {
+                            logger.Debug("We have grids in our data to update...");
+                            foreach (KeyValuePair<string, JArray> grid_item in grids)
+                            {
+                                int grid_rowid = 1; //new grid field
+
+                                var grid_type = dataset.Datastore.TablePrefix + "_" + grid_item.Key;
+                                logger.Debug(" Hey we have a relation of type: " + grid_type);
+
+                                //get objecttype of this type
+                                var dbset_grid_type = db.GetTypeFor(grid_type);
+                                var dbset_relation = db.GetDbSet(grid_type);
+
+                                //logger.Debug("updating items in : " + grid_item.Key );
+
+                                //get the count of relationrows:
+                                grid_rowid = grid_item.Value.Count()+1;
+
+                                foreach (dynamic relation_row in grid_item.Value)
+                                {
+                                    //logger.Debug("Relationrow: " + relation_row);
+                                    var relationObj = relation_row.ToObject(dbset_grid_type);
+
+                                    //is it a new row?
+                                    if (relationObj.Id == 0)
+                                    {
+                                        relationObj.EffDt = DateTime.Now;
+                                        relationObj.ParentRowId = detail.RowId;
+                                        relationObj.RowId = grid_rowid; grid_rowid++;
+                                        relationObj.RowStatusId = DataDetail.ROWSTATUS_ACTIVE;
+                                        relationObj.ByUserId = activity.UserId;
+                                        relationObj.ActivityId = activity.Id;
+                                        relationObj.QAStatusId = dataset.DefaultRowQAStatusId; //TODO?
+                                        dbset_relation.Add(relationObj);
+                                    }
+                                    else //or are we updating...  (what about DELETE?)
+                                    {
+                                        relationObj.EffDt = DateTime.Now;
+                                        relationObj.Id = 0;
+                                        dbset_relation.Add(relationObj);
+                                        logger.Debug("woot updated a grid row!");
+                                    }
+
+                                    //logger.Debug(JsonConvert.SerializeObject( relationObj, Formatting.Indented));
+
+                                }
+                            }
+                        }
 
                     }
 
@@ -1103,7 +1164,6 @@ namespace services.Controllers
                     logger.Debug(e.ToString());
 
                     throw e;
-
                 }
 
                 try
@@ -1161,7 +1221,10 @@ namespace services.Controllers
                         if (grid_fields != null)
                         {
                             foreach (var grid_field in grid_fields)
+                            {
+                                logger.Debug("Found a grid field: " + grid_field.DbColumnName);
                                 grids.Add(grid_field.DbColumnName, detailitem[grid_field.DbColumnName]);
+                            }
                         }
 
                     }
