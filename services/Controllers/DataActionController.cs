@@ -73,6 +73,14 @@ namespace services.Controllers
 
         }
 
+
+        [HttpGet]
+        public IEnumerable<int> GetFishermanList(int id)
+        {
+            IEnumerable<int> seqOfInts = new int[] { 1, 2, 3 };
+            return seqOfInts;
+        }
+
         [HttpGet]
         public IEnumerable<Dataset> GetMyDatasets()
         {
