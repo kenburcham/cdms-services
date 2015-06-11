@@ -75,10 +75,13 @@ namespace services.Controllers
 
 
         [HttpGet]
-        public IEnumerable<int> GetFishermanList(int id)
+        public Dictionary<int,String> GetFishermanList(int id)
         {
-            IEnumerable<int> seqOfInts = new int[] { 1, 2, 3 };
-            return seqOfInts;
+            Dictionary<int, String> list = new Dictionary<int, string>();
+            list.Add(1, "Name 1");
+            list.Add(2, "Name 2");
+            list.Add(3, "Name 3");
+            return list;
         }
 
         [HttpGet]
