@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,6 +11,8 @@ namespace services.Models.Data
         public Dataset Dataset { get; set; }
         public WaterTemp_Header Header { get; set; }
         public List<WaterTemp_Detail> Details { get; set; }
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public WaterTemp() {
             Details = new List<WaterTemp_Detail>();
@@ -42,7 +45,7 @@ namespace services.Models.Data
             Dataset = Header.Activity.Dataset;
 
             //select detail by activityid (taking effdt into account)
-            var details_q = from h in ndb.WaterTemp_Detail
+            var details_q = (from h in ndb.WaterTemp_Detail
                             where h.ActivityId == ActivityId
                             where h.RowStatusId == DataDetail.ROWSTATUS_ACTIVE
                             join h2 in
@@ -53,7 +56,7 @@ namespace services.Models.Data
                                     group hh by new { hh.ActivityId, hh.RowId } into cig
                                     select new { ActivityId = cig.Key.ActivityId, RowId = cig.Key.RowId, EffDt = cig.Max(ed => ed.EffDt) }
                                 ) on new { h.ActivityId, h.RowId, h.EffDt } equals new { h2.ActivityId, h2.RowId, h2.EffDt }
-                            select h;
+                            select h).OrderBy(x => x.ReadingDateTime);
 
             foreach (var detail in details_q)
             {

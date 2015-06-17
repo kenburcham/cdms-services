@@ -174,6 +174,7 @@
     <Compile Include="Controllers\DataActionController.cs" />
     <Compile Include="Controllers\DatasetsController.cs" />
     <Compile Include="Controllers\DatastoreController.cs" />
+    <Compile Include="Controllers\ScriptController.cs" />
     <Compile Include="Migrations\201308052143115_InitialModels.cs" />
     <Compile Include="Migrations\201308052143115_InitialModels.Designer.cs">
       <DependentUpon>201308052143115_InitialModels.cs</DependentUpon>
@@ -441,6 +442,14 @@
     <Compile Include="Migrations\201409241528129_creel-dataset.cs" />
     <Compile Include="Migrations\201409241528129_creel-dataset.Designer.cs">
       <DependentUpon>201409241528129_creel-dataset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201409251205494_lookup-source.cs" />
+    <Compile Include="Migrations\201409251205494_lookup-source.Designer.cs">
+      <DependentUpon>201409251205494_lookup-source.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201409301901306_rename-detail-location-creelsurvey.cs" />
+    <Compile Include="Migrations\201409301901306_rename-detail-location-creelsurvey.Designer.cs">
+      <DependentUpon>201409301901306_rename-detail-location-creelsurvey.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Migrations\201311191804154_dataset-support.cs" />
@@ -838,6 +847,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201409241528129_creel-dataset.resx">
       <DependentUpon>201409241528129_creel-dataset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201409251205494_lookup-source.resx">
+      <DependentUpon>201409251205494_lookup-source.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201409301901306_rename-detail-location-creelsurvey.resx">
+      <DependentUpon>201409301901306_rename-detail-location-creelsurvey.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

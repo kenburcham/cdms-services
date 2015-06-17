@@ -308,6 +308,32 @@ namespace services.Controllers
         }
 
         [HttpPost]
+        public HttpResponseMessage DeleteLocation(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+            User me = AuthorizationManager.getCurrentUser();
+
+            Location loc = db.Location.Find(json.LocationId.ToObject<int>());
+
+            if (loc == null)
+                throw new Exception("Configuration error.");
+
+            if (db.Activities.Where(o => o.LocationId == loc.Id).Count() == 0)
+            {
+                db.Location.Remove(loc);
+                db.SaveChanges();
+                logger.Debug("Deleted location "+loc.Id+" because there was no activity.");
+            }
+            else
+            {
+                logger.Debug("Tried to delete location " + loc.Id + " when activities exist.");
+                throw new Exception("Location Delete failed because activities exist!");
+            }
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
         public HttpResponseMessage SaveInstrumentAccuracyCheck(JObject jsonData)
         {
             var db = ServicesContext.Current;
